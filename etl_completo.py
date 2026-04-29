@@ -1,6 +1,3 @@
-"""
-Apenas para teste
-"""
 import requests
 import pandas as pd
 from sqlalchemy import create_engine
@@ -16,7 +13,7 @@ print("🔧 Carregando configurações...")
 
 # Banco
 usuario = "postgres"
-senha = os.getenv('DB_PASSWORD', 'postgres123')
+senha = os.getenv('DB_PASSWORD')
 host = "localhost"
 porta = "5432"
 banco = "tcc_asteroides"
