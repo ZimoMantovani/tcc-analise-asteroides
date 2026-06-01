@@ -72,7 +72,7 @@ with st.sidebar:
     st.divider()
     
     # Botão de atualização
-    if st.button("🔄 Atualizar Dados", use_container_width=True):
+    if st.button("🔄 Atualizar Dados", width='stretch'):
         with st.spinner("Baixando dados..."):
             import subprocess
             # Roda o arquivo ETL_Completo.py
@@ -178,7 +178,7 @@ if pagina == "🏠 Home":
             names=['Seguro', 'Perigoso'],
             color_discrete_sequence=['#00cc66', '#ff4444']
         )
-        st.plotly_chart(fig_pizza, use_container_width=True)
+        st.plotly_chart(fig_pizza, width='stretch')
     
     with col_dir:
         st.subheader("🏆 Top 5 Maiores Asteroides")
@@ -192,7 +192,7 @@ if pagina == "🏠 Home":
     # Próximas aproximações
     st.subheader("📅 Próximas Aproximações (7 dias)")
     proximos = df.head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
-    st.dataframe(proximos, use_container_width=True, hide_index=True)
+    st.dataframe(proximos, width='stretch', hide_index=True)
 
 elif pagina == "📊 Estatísticas":
     st.title("📊 Estatísticas Detalhadas")
@@ -203,21 +203,21 @@ elif pagina == "📊 Estatísticas":
         col1, col2 = st.columns(2)
         with col1:
             fig_hist = px.histogram(df, x='diametro_max_km', nbins=30, title="Distribuição de Tamanhos")
-            st.plotly_chart(fig_hist, use_container_width=True)
+            st.plotly_chart(fig_hist, width='stretch')
         with col2:
             top10 = df.nlargest(10, 'diametro_max_km')
             fig_bar = px.bar(top10, x='nome', y='diametro_max_km', color='perigoso', title="Top 10 Maiores")
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, width='stretch')
     
     with tab2:
         fig_scatter = px.scatter(df, x='diametro_max_km', y='velocidade_kmh', color='perigoso',
                                  title="Tamanho vs Velocidade", hover_data=['nome'])
-        st.plotly_chart(fig_scatter, use_container_width=True)
+        st.plotly_chart(fig_scatter, width='stretch')
     
     with tab3:
         fig_box = px.box(df, x='perigoso', y='distancia_lunar', color='perigoso',
                          title="Distribuição de Distâncias")
-        st.plotly_chart(fig_box, use_container_width=True)
+        st.plotly_chart(fig_box, width='stretch')
 
 elif pagina == "🔍 Explorador":
     st.title("🔍 Explorador de Asteroides")
@@ -245,7 +245,7 @@ elif pagina == "🔍 Explorador":
     
     st.write(f"**{len(df_filtrado)} asteroides encontrados**")
     st.dataframe(df_filtrado[['nome', 'data_aproximacao', 'diametro_max_km', 'velocidade_kmh', 'distancia_lunar', 'perigoso']], 
-                 use_container_width=True, height=500)
+                 width='stretch', height=500)
 
 elif pagina == "⚠️ Análise de Riscos":
     st.title("Análise de Riscos dos Asteroides")
@@ -298,7 +298,7 @@ elif pagina == "⚠️ Análise de Riscos":
             title="Distribuição por Nível de Risco",
             color_discrete_sequence=['#00ff00', '#88ff00', '#ffff00', '#ff8800', '#ff0000']
         )
-        st.plotly_chart(fig_pizza, use_container_width=True)
+        st.plotly_chart(fig_pizza, width='stretch')
     
     with col2:
         # Gráfico de barras - Categorias
@@ -311,7 +311,7 @@ elif pagina == "⚠️ Análise de Riscos":
             color=categorias.values,
             color_continuous_scale='Reds'
         )
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width='stretch')
     
     st.divider()
     
@@ -333,7 +333,7 @@ elif pagina == "⚠️ Análise de Riscos":
         })
     
     df_categorias = pd.DataFrame(categorias_info)
-    st.dataframe(df_categorias, use_container_width=True, hide_index=True)
+    st.dataframe(df_categorias, width='stretch', hide_index=True)
     
     st.divider()
     
@@ -355,7 +355,7 @@ elif pagina == "⚠️ Análise de Riscos":
     
     st.dataframe(
         top_perigosos,
-        use_container_width=True,
+        width='stretch',
         hide_index=True
     )
     
@@ -454,7 +454,7 @@ elif pagina == "⚠️ Análise de Riscos":
             'CRÍTICO': '#ff0000'
         }
     )
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')
     
     st.divider()
     
