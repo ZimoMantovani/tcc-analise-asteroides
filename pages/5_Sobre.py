@@ -10,13 +10,13 @@ st.markdown("""
     
 #### Objetivo
 Monitorar e analisar objetos próximos à Terra (NEOs - Near Earth Objects) utilizando 
-dados da NASA NeoWs API, processamento ETL em Python e visualização interativa.
+dados da NASA NeoWs API, processamento ETL em Python.
 
 #### Tecnologias
 - **Backend:** Python, SQLAlchemy, Pandas
 - **Frontend:** Streamlit, Plotly
 - **Banco de Dados:** PostgreSQL
-- **Machine Learning:** Scikit-learn (Módulo QP4)
+- **Machine Learning:** Scikit-learn 
 - **API:** NASA NeoWs
 
 #### Funcionalidades

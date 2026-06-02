@@ -12,8 +12,8 @@ class AnalisadorRiscos:
     """
     
     # Constantes físicas
-    DENSIDADE_MEDIA_ASTEROIDE = 2600  # kg/m³ (rocha típica)
-    VELOCIDADE_IMPACTO_MEDIA = 20000  # m/s (velocidade típica de impacto)
+    DENSIDADE_MEDIA_ASTEROIDE = 2600  # kg/m³ 
+    VELOCIDADE_IMPACTO_MEDIA = 20000  # m/s
     
     # Escalas de referência (baseadas em eventos históricos)
     EVENTOS_HISTORICOS = {

@@ -1,11 +1,18 @@
-# 📄 **README.md COMPLETO PARA GITHUB**
-
-Crie um arquivo `README.md` na raiz do projeto:
-
-```markdown
 # 🌍 NEO Monitor - Sistema de Monitoramento de Asteroides
 
-Sistema automatizado de monitoramento e análise de asteroides próximos à Terra (NEOs - Near Earth Objects) utilizando dados da NASA NeoWs API, processamento ETL em Python e visualização interativa.
+<div align="center">
+  <p><b>Monitorando o céu, protegendo a Terra</b></p>
+  
+  ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?style=for-the-badge&logo=python)
+  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg?style=for-the-badge&logo=postgresql)
+  ![Streamlit](https://img.shields.io/badge/Streamlit-1.31-red.svg?style=for-the-badge&logo=streamlit)
+  ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine_Learning-orange.svg?style=for-the-badge&logo=scikit-learn)
+  ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
+</div>
+
+<br>
+
+Sistema automatizado de monitoramento e análise de asteroides próximos à Terra (NEOs - *Near Earth Objects*) utilizando dados da NASA NeoWs API, processamento ETL em Python, Machine Learning e visualização interativa com Streamlit.
 
 **Desenvolvido como TCC de Engenharia de Computação - IFSP PRC**
 
@@ -13,411 +20,207 @@ Sistema automatizado de monitoramento e análise de asteroides próximos à Terr
 
 ## 📋 Índice
 
-- [Sobre o Projeto](#sobre-o-projeto)
-- [Funcionalidades](#funcionalidades)
-- [Tecnologias](#tecnologias)
-- [Pré-requisitos](#pré-requisitos)
-- [Instalação](#instalação)
-- [Configuração](#configuração)
-- [Como Executar](#como-executar)
-- [Estrutura do Projeto](#estrutura-do-projeto)
-- [Screenshots](#screenshots)
-- [Questões de Pesquisa](#questões-de-pesquisa)
-- [Roadmap](#roadmap)
-- [Contribuindo](#contribuindo)
-- [Licença](#licença)
-- [Contato](#contato)
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Tecnologias](#️-tecnologias)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação](#-instalação)
+- [Configuração](#️-configuração)
+- [Como Executar](#-como-executar)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Contribuição](#-contribuindo)
+- [Licença](#-licença)
+- [Contato](#-contato)
 
 ---
 
 ## 📖 Sobre o Projeto
 
-O NEO Monitor é um sistema web completo para monitoramento de asteroides próximos à Terra, desenvolvido com foco em Engenharia de Dados. O sistema coleta dados diariamente da NASA, processa informações sobre objetos potencialmente perigosos, armazena em banco de dados PostgreSQL e disponibiliza dashboards interativos para visualização de riscos e métricas.
+O **NEO Monitor** é um sistema web analítico e preditivo para monitoramento de asteroides próximos à Terra. Desenvolvido com foco em Engenharia de Dados e Machine Learning, o sistema automatiza a coleta de dados da NASA, armazena o histórico em um banco PostgreSQL e fornece dashboards para análise de riscos, cenários de impacto e métricas astronômicas de forma intuitiva.
 
 ### Objetivo
 
-Tornar acessível ao público geral informações científicas sobre asteroides próximos à Terra, permitindo:
-- Acompanhamento visual de aproximações
-- Análise de riscos e cenários de impacto
-- Compreensão de conceitos astronômicos complexos de forma intuitiva
+Tornar o monitoramento de asteroides e o entendimento dos riscos associados acessível para a comunidade científica e para o público geral, através de:
+- Acompanhamento interativo e atualizado.
+- Análise aprofundada de periculosidade.
+- Uso de IA (Machine Learning) para classificação e previsão de ameaças.
 
 ---
 
 ## ✨ Funcionalidades
 
-### Pipeline ETL Automatizado
-- ✅ Coleta diária de dados da NASA NeoWs API
-- ✅ Processamento e limpeza de dados com Pandas
-- ✅ Armazenamento histórico em PostgreSQL
-- ✅ Sistema de logs e monitoramento
+### 🔄 Pipeline ETL Automatizado (`etl_completo.py`)
+- Coleta diária automatizada da NASA NeoWs API.
+- Tratamento, limpeza de dados e padronização usando `pandas`.
+- Armazenamento em banco de dados relacional (PostgreSQL).
 
-### Dashboard Interativo
-- ✅ **Home:** Métricas em tempo real e próximas aproximações
-- ✅ **Estatísticas:** Análises detalhadas com gráficos interativos
-- ✅ **Explorador:** Filtros dinâmicos e busca personalizada
-- ✅ **Análise de Riscos:** Cálculo de energia de impacto e cenários
-- ✅ **Visualização 3D:** Representação espacial Terra-Asteroides (animada)
+### 📊 Dashboard Interativo (Streamlit)
+O sistema foi modularizado em múltiplas páginas para melhor experiência de usuário:
+- **🏠 Home:** Resumo rápido, próximas aproximações e status geral do céu.
+- **📈 Estatísticas:** Visão analítica, com distribuições de tamanhos, distâncias e velocidades.
+- **🔭 Explorador:** Busca detalhada de asteroides com filtros dinâmicos.
+- **⚠️ Análise de Riscos:** Módulo focado na simulação de impacto, energia (Megatons) e raio de destruição.
+- **ℹ️ Sobre:** Informações sobre o projeto e metodologia TCC.
 
-### Análise de Riscos
-- ✅ Índice de periculosidade proprietário (0-100)
-- ✅ Cálculo de energia de impacto (megatons TNT)
-- ✅ Estimativa de raio de destruição
-- ✅ Comparação com eventos históricos
-- ✅ Classificação por categoria de impacto
+### 🤖 Machine Learning (`modelo_ia.py`)
+- Modelo baseado em **Random Forest Classifier**.
+- Treinado com dados históricos para determinar a periculosidade (`hazardous`) de novos asteroides detectados com base em suas características físicas e orbitais.
 
 ---
 
 ## 🛠️ Tecnologias
 
-### Backend
-- **Python 3.10+** - Linguagem principal
-- **Pandas** - Manipulação de dados
-- **SQLAlchemy** - ORM para banco de dados
-- **Requests** - Consumo de API REST
+### Linguagem & Ferramentas
+- **Python 3.10+**
+- **Pandas e NumPy** (Manipulação e cálculos)
+- **Scikit-Learn e Joblib** (Machine Learning e serialização de modelos)
 
-### Frontend
-- **Streamlit** - Framework web Python
-- **Plotly** - Visualizações interativas
-- **NumPy** - Cálculos científicos
+### Backend e Dados
+- **PostgreSQL 16** (Banco de dados)
+- **SQLAlchemy** (ORM)
+- **Requests** (Consumo da API REST)
 
-### Banco de Dados
-- **PostgreSQL 16** - Banco relacional
-
-### APIs Externas
-- **NASA NeoWs API** - Dados de asteroides
+### Frontend (Dashboard)
+- **Streamlit** (Framework de UI)
+- **Plotly** (Gráficos interativos)
 
 ---
 
 ## 📦 Pré-requisitos
 
-Antes de começar, certifique-se de ter instalado:
+Para executar este projeto localmente, você precisa ter:
 
-- **Python 3.10 ou superior**
-  - Download: [python.org](https://www.python.org/downloads/)
-  
-- **PostgreSQL 16 ou superior**
-  - Download: [postgresql.org](https://www.postgresql.org/download/)
-  
-- **Git** (para clonar o repositório)
-  - Download: [git-scm.com](https://git-scm.com/downloads/)
-
-- **Chave de API da NASA** (gratuita)
-  - Obtenha em: [api.nasa.gov](https://api.nasa.gov/)
+- **Python 3.10+**: [Download](https://www.python.org/downloads/)
+- **PostgreSQL 16+**: [Download](https://www.postgresql.org/download/)
+- **Chave de API da NASA** (gratuita): [Obter em api.nasa.gov](https://api.nasa.gov/)
 
 ---
 
 ## 🚀 Instalação
 
-### 1. Clone o repositório
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/seu-usuario/tcc-analise-asteroides.git
+   cd tcc-analise-asteroides
+   ```
 
-```bash
-git clone https://github.com/seu-usuario/tcc-asteroides.git
-cd tcc-asteroides
-```
+2. **Crie e ative um ambiente virtual:**
+   ```bash
+   # Windows
+   python -m venv venv
+   venv\Scripts\activate
+   
+   # Linux/Mac
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
 
-### 2. Crie e ative o ambiente virtual
-
-**Windows:**
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-**Linux/Mac:**
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-### 3. Instale as dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-**Conteúdo do `requirements.txt`:**
-```txt
-streamlit==1.31.0
-pandas==2.2.0
-plotly==5.18.0
-sqlalchemy==2.0.25
-psycopg2-binary==2.9.9
-python-dotenv==1.0.0
-requests==2.31.0
-numpy==1.26.3
-```
+3. **Instale as dependências:**
+   ```bash
+    pip install -r requirements.txt
+   ```
 
 ---
 
 ## ⚙️ Configuração
 
-### 1. Configure o PostgreSQL
+1. **Configuração do Banco de Dados (PostgreSQL):**
+   ```sql
+   -- Conecte-se ao PostgreSQL e crie o banco
+   CREATE DATABASE tcc_asteroides;
+   ```
 
-**Abra o pgAdmin ou terminal do PostgreSQL e execute:**
-
-```sql
--- Criar banco de dados
-CREATE DATABASE tcc_asteroides;
-
--- Conectar ao banco
-\c tcc_asteroides
-
--- A tabela será criada automaticamente pelo ETL
-```
-
-### 2. Configure as variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto:
-
-```env
-# API da NASA
-NASA_API_KEY=SuaChaveAqui
-
-# Banco de Dados
-DB_PASSWORD=postgres123
-DB_USER=postgres
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=tcc_asteroides
-```
-
-**⚠️ IMPORTANTE:** Adicione `.env` no `.gitignore` para não expor credenciais!
-
-### 3. Crie o arquivo `.gitignore`
-
-```gitignore
-# Ambientes virtuais
-venv/
-.venv/
-env/
-
-# Credenciais
-.env
-*.env
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Streamlit
-.streamlit/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Dados temporários
-dados/
-*.csv
-*.json
-
-# OS
-.DS_Store
-Thumbs.db
-```
+2. **Variáveis de Ambiente:**
+   Crie um arquivo `.env` na raiz do projeto contendo suas credenciais:
+   ```env
+   # API da NASA
+   NASA_API_KEY=SuaChaveAqui
+   
+   # Banco de Dados
+   DB_USER=postgres
+   DB_PASSWORD=sua_senha
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=tcc_asteroides
+   ```
+   *Certifique-se de que o `.env` esteja no `.gitignore`.*
 
 ---
 
 ## 🎮 Como Executar
 
-### 1. Primeira execução - Coletar dados
-
+### 1. Alimentação do Banco de Dados (ETL)
+Antes de rodar o painel pela primeira vez, execute o pipeline de coleta para popular o banco de dados:
 ```bash
 python etl_completo.py
 ```
 
-**Saída esperada:**
-```
-🚀 INICIANDO PIPELINE ETL - Near Earth Objects
-======================================================================
-📡 Buscando asteroides dos próximos 7 dias...
-✅ API respondeu: 88 asteroides encontrados
-🔄 Processando dados...
-✅ 88 asteroides únicos após limpeza
-💾 Salvando 88 asteroides no banco...
-✅ Dados salvos com sucesso!
-🎉 PIPELINE COMPLETO!
-```
-
-### 2. Verificar dados salvos (opcional)
-
+### 2. Treinamento da Inteligência Artificial (Opcional)
+O modelo pré-treinado (`modelo_asteroides.joblib`) já deve estar na pasta. Caso deseje retreinar com novos dados do arquivo CSV local:
 ```bash
-python verificar_dados.py
+python modelo_ia.py
 ```
 
-### 3. Iniciar o Dashboard
-
+### 3. Iniciar o Dashboard (Streamlit)
+Execute a aplicação principal. O sistema abrirá automaticamente no navegador em `http://localhost:8501`.
 ```bash
-streamlit run dashboard.py
-```
-
-**O navegador abrirá automaticamente em:** `http://localhost:8501`
-
-### 4. Visualização 3D (opcional - executar separadamente)
-
-```bash
-streamlit run visualizacao_3d_animada.py
+streamlit run app.py
 ```
 
 ---
 
 ## 📁 Estrutura do Projeto
 
+A estrutura foi reorganizada para suportar o formato *Multipage* do Streamlit e a integração com IA:
+
+```text
+tcc-analise-asteroides/
+│
+├── 📄 app.py                        # Ponto de entrada (Home) do Streamlit
+├── 📂 pages/                        # Páginas adicionais do Dashboard
+│   ├── 1_Home.py
+│   ├── 2_Estatisticas.py
+│   ├── 3_Explorador.py
+│   ├── 4_Analise_Riscos.py
+│   └── 5_Sobre.py
+│
+├── 📄 etl_completo.py               # Script de extração, transformação e carga (NASA API -> BD)
+├── 📄 modelo_ia.py                  # Script para treino e inferência do modelo Random Forest
+├── 📄 modelo_asteroides.joblib      # Modelo de IA serializado
+├── 📄 analise_riscos.py             # Lógica de cálculo de risco e energia de impacto
+├── 📄 utils.py                      # Funções auxiliares gerais
+├── 📄 curiosidades_ia.py            # Geração de curiosidades astronômicas
+│
+├── 📄 neo_v2.csv                    # Dataset de backup/treinamento
+├── 📄 .env                          # Configurações locais (Ignorado pelo Git)
+└── 📄 README.md                     # Documentação principal
 ```
-tcc-asteroides/
-│
-├── 📂 src/                          # Código-fonte principal (opcional)
-│
-├── 📄 etl_completo.py               # Pipeline ETL (coleta de dados)
-├── 📄 dashboard.py                  # Dashboard principal Streamlit
-├── 📄 visualizacao_3d.py            # Visualização 3D estática
-├── 📄 visualizacao_3d_animada.py    # Visualização 3D com animação
-├── 📄 analise_riscos.py             # Módulo de cálculo de riscos
-├── 📄 verificar_dados.py            # Script de validação
-│
-├── 📄 .env                          # Variáveis de ambiente (NÃO COMMITAR!)
-├── 📄 .gitignore                    # Arquivos ignorados pelo Git
-├── 📄 requirements.txt              # Dependências Python
-├── 📄 README.md                     # Este arquivo
-│
-└── 📂 docs/                         # Documentação do TCC
-    └── relatorio_parcial.md
-```
-
----
-
-## 📸 Screenshots
-
-### Dashboard Principal
-![Home](docs/screenshots/home.png)
-*Painel principal com métricas e próximas aproximações*
-
-### Análise de Riscos
-![Riscos](docs/screenshots/riscos.png)
-*Sistema de classificação de periculosidade e cenários de impacto*
-
-### Visualização 3D
-![3D](docs/screenshots/3d.png)
-*Visualização espacial interativa Terra-Asteroides*
-
----
-
-## 🔍 Questões de Pesquisa
-
-Este projeto responde às seguintes questões de pesquisa do TCC:
-
-### ✅ QP1: O que define periculosidade?
-- Implementado sistema de classificação NASA + índice proprietário (0-100)
-- Critérios: tamanho, distância, velocidade, classificação oficial
-
-### ✅ QP2: Como acompanhar o percurso?
-- Visualização 3D interativa com animação
-- Posicionamento por distância real (distâncias lunares)
-- Filtros e controles de exploração
-
-### ✅ QP3: Quais são os riscos?
-- Cálculo de energia de impacto (megatons TNT)
-- Estimativa de raio de destruição
-- Categorização por severidade (5 níveis)
-- Comparação com eventos históricos
-
-### 🔄 QP4: Processamento com IA
-- **Status:** Em desenvolvimento
-- **Planejado:** Modelo de classificação supervisionada ou análise temporal
-
----
-
-## 🗓️ Roadmap
-
-### Versão Parcial (Junho 2026) ✅
-- [x] Arquitetura web completa
-- [x] Pipeline ETL funcional
-- [x] Dashboard interativo
-- [x] Visualização 3D
-- [x] Análise de riscos (QP1-QP3)
-- [ ] Módulo de IA (QP4)
-
-### Versão Final (Dezembro 2026)
-- [ ] Automação ETL (GitHub Actions/Airflow)
-- [ ] Sistema de notificações
-- [ ] Testes automatizados
-- [ ] Deploy em produção (Streamlit Cloud)
-- [ ] Documentação completa (monografia)
-
----
 
 ## 🤝 Contribuindo
 
-Contribuições são bem-vindas! Para contribuir:
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
-### Padrões de Código
-- Siga PEP 8 para Python
-- Adicione docstrings em funções
-- Comente código complexo
-- Teste antes de commitar
+Contribuições são bem-vindas! Se você deseja ajudar:
+1. Faça o *Fork* do projeto
+2. Crie sua *branch* de feature (`git checkout -b feature/NovaAnalise`)
+3. Faça o *commit* das suas alterações (`git commit -m 'Add: nova métrica de análise orbital'`)
+4. Faça o *Push* para a branch (`git push origin feature/NovaAnalise`)
+5. Abra um *Pull Request*
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto é distribuído sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para obter mais informações.
 
 ---
 
 ## 👤 Contato
 
 **Symon O. Mantovani**
+- 📧 Email: symonmantovani36@gmail.com
+- 💼 LinkedIn: [Symon Mantovani](https://www.linkedin.com/in/symon-mantovani/)
+- 🐙 GitHub: [Symon Mantovani](https://github.com/ZimoMantovani)
 
-- 📧 Email: [seu-email@exemplo.com](mailto:seu-email@exemplo.com)
-- 💼 LinkedIn: [seu-linkedin](https://linkedin.com/in/seu-usuario)
-- 🐙 GitHub: [seu-usuario](https://github.com/seu-usuario)
-
-**Instituição:** Instituto Federal de São Paulo - Campus Presidente Epitácio
-
-**Orientador:** [Nome do Professor]
+**Instituição:** Instituto Federal de São Paulo (IFSP) - Campus Piracicaba
 
 ---
-
-## 🙏 Agradecimentos
-
-- **NASA** - Pelos dados abertos da NeoWs API
-- **IFSP** - Pela estrutura e suporte acadêmico
-- **Professor Orientador** - Pela orientação e feedback
-- **Comunidade Python** - Pelas bibliotecas open-source
-
----
-
-## 📚 Referências
-
-1. NASA Near Earth Object Program - [https://cneos.jpl.nasa.gov/](https://cneos.jpl.nasa.gov/)
-2. NASA NeoWs API Documentation - [https://api.nasa.gov/](https://api.nasa.gov/)
-3. Streamlit Documentation - [https://docs.streamlit.io/](https://docs.streamlit.io/)
-4. PostgreSQL Documentation - [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/)
-
----
-
-**⭐ Se este projeto te ajudou, considere dar uma estrela no GitHub!**
-
----
-
-<div align="center">
-  
-  **🌍 Monitorando o céu, protegendo a Terra**
-  
-  ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
-  ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
-  ![Streamlit](https://img.shields.io/badge/Streamlit-1.31-red.svg)
-  ![License](https://img.shields.io/badge/License-MIT-green.svg)
-  
-</div>
-```
+*Referências da API: [NASA NeoWs (Near Earth Object Web Service)](https://api.nasa.gov/)*
