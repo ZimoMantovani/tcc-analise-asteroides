@@ -3,37 +3,48 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 from urllib.parse import quote_plus
 import os
-import sys
-import subprocess
 from dotenv import load_dotenv
+
+# Importa as funções do seu ETL para o botão funcionar
+from etl_completo import extrair_dados_nasa, transformar_dados, carregar_no_banco
 
 load_dotenv()
 
 @st.cache_resource
 def get_database_connection():
-    """Cria conexão com PostgreSQL"""
+    """Cria conexão com PostgreSQL com tratamento para evitar erro de acentos (lc_messages)"""
     try:
         usuario = "postgres"
         senha = os.getenv('DB_PASSWORD')
-        connection_string = f"postgresql://{usuario}:{quote_plus(senha)}@localhost:5432/tcc_asteroides?client_encoding=utf8"
-        engine = create_engine(connection_string, connect_args={'client_encoding': 'utf8'})
         
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
+        if not senha:
+            return None
+            
+        connection_string = f"postgresql://{usuario}:{quote_plus(senha)}@localhost:5432/tcc_asteroides"
         
+        # O lc_messages=C evita o erro do 'ç' que quebrava o Python antes
+        engine = create_engine(
+            connection_string, 
+            connect_args={
+                'client_encoding': 'utf8',
+                'options': '-c lc_messages=C'
+            }
+        )
         return engine
     except Exception as e:
         st.error(f"Erro ao conectar no banco: {e}")
         return None
 
+
 @st.cache_data(ttl=300)
 def carregar_asteroides():
-    """Carrega asteroides do banco de dados"""
+    """Carrega asteroides do banco de dados ordenados pela aproximação"""
     engine = get_database_connection()
     
     if engine is None:
-        raise Exception("Conexão com banco falhou")
+        raise Exception("Conexão com banco falhou ou senha ausente")
     
+    # Voltamos com a sua query original ordenando os dados!
     query = text("SELECT * FROM asteroides ORDER BY data_aproximacao")
     df = pd.read_sql(query, engine.connect())
     
@@ -42,29 +53,58 @@ def carregar_asteroides():
     
     return df
 
+
 def render_sidebar():
     """Renderiza a barra lateral padrão para todas as páginas."""
+    
+    # 1. Esconde o menu nativo do Streamlit
+    st.markdown("""
+        <style>
+            [data-testid="stSidebarNav"] {
+                display: none;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
     with st.sidebar:
+        # --- BLOCO 1: LOGO E TÍTULOS ---
         st.image("https://www.nasa.gov/wp-content/uploads/2023/03/nasa-logo-web-rgb.png", width=200)
-        st.title("🌍 NEO Monitor")
+        st.markdown("### 🌍 NEO Monitor")
         st.markdown("**Near Earth Objects**")
+        st.markdown("---")
         
-        st.divider()
+        # --- BLOCO 2: LINKS DE NAVEGAÇÃO ---
+        st.caption("Navegação")
+        st.page_link("app.py", label="Home")
+        st.page_link("pages/2_Estatisticas.py", label="Estatisticas")
+        st.page_link("pages/3_Explorador.py", label="Explorador")
+        st.page_link("pages/4_Analise_Riscos.py", label="Analise de Riscos")
+        st.page_link("pages/5_Sobre.py", label="Sobre")
+        st.markdown("---")
         
-        if st.button("🔄 Atualizar Dados", width='stretch'):
-            with st.spinner("Baixando dados..."):
-                env = os.environ.copy()
-                env["PYTHONIOENCODING"] = "utf-8"
-                
-                resultado = subprocess.run([sys.executable, "etl_completo.py"], capture_output=True, text=True, encoding="utf-8", env=env)
-                if resultado.returncode != 0:
-                    st.error("❌ Falha ao atualizar dados!")
-                    st.code(resultado.stderr)
-                    st.stop()
-            st.cache_data.clear()
-            st.rerun()
+        # --- BLOCO 3: BOTÃO DE ATUALIZAÇÃO (ETL) ---
+        if st.button("🔄 Atualizar Dados", use_container_width=True):
+            with st.spinner("📡 Buscando dados na NASA..."):
+                dados_brutos = extrair_dados_nasa(dias=7)
+                if dados_brutos:
+                    df_novos = transformar_dados(dados_brutos)
+                    if not df_novos.empty:
+                        sucesso = carregar_no_banco(df_novos)
+                        if sucesso:
+                            # Limpa o cache para forçar a leitura dos dados novos
+                            carregar_asteroides.clear()
+                            st.success("✅ Dados atualizados com sucesso!")
+                            st.rerun() 
+                        else:
+                            st.error("❌ Erro ao salvar no banco de dados.")
+                    else:
+                        st.warning("⚠️ A API não retornou novos asteroides.")
+                else:
+                    st.error("❌ Falha na conexão com a NASA.")
         
-        st.divider()
+        st.markdown("---")
+        
+        # --- BLOCO 4: STATUS DO SISTEMA E DIAGNÓSTICO ---
         st.caption("**Status do Sistema:**")
         
         try:
@@ -78,6 +118,7 @@ def render_sidebar():
             st.error("❌ Erro de conexão")
             st.caption(f"Detalhes: {str(e)[:50]}...")
             
+            # Seu botão de diagnóstico de volta!
             if st.button("🔍 Diagnóstico", key="diagnostico"):
                 st.write("**Checklist:**")
                 try:

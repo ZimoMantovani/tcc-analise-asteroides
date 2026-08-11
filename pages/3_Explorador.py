@@ -1,5 +1,8 @@
 import streamlit as st
 from utils import carregar_asteroides, render_sidebar
+import warnings
+
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 st.set_page_config(page_title="Explorador - NEO Monitor", page_icon="🔍", layout="wide")
 render_sidebar()
@@ -35,4 +38,4 @@ df_filtrado = df_filtrado[
 
 st.write(f"**{len(df_filtrado)} asteroides encontrados**")
 st.dataframe(df_filtrado[['nome', 'data_aproximacao', 'diametro_max_km', 'velocidade_kmh', 'distancia_lunar', 'perigoso']], 
-             width='stretch', height=500)
+             use_container_width=True, height=500)

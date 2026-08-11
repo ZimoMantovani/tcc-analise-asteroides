@@ -107,8 +107,8 @@ Para executar este projeto localmente, você precisa ter:
 2. **Crie e ative um ambiente virtual:**
    ```bash
    # Windows
-   python -m venv venv
-   venv\Scripts\activate
+   python -m venv venvNEO
+   venvNEO\Scripts\activate
    
    # Linux/Mac
    python3 -m venv venv
