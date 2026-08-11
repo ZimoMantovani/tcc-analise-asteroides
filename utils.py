@@ -44,7 +44,6 @@ def carregar_asteroides():
     if engine is None:
         raise Exception("Conexão com banco falhou ou senha ausente")
     
-    # Voltamos com a sua query original ordenando os dados!
     query = text("SELECT * FROM asteroides ORDER BY data_aproximacao")
     df = pd.read_sql(query, engine.connect())
     
@@ -118,7 +117,6 @@ def render_sidebar():
             st.error("❌ Erro de conexão")
             st.caption(f"Detalhes: {str(e)[:50]}...")
             
-            # Seu botão de diagnóstico de volta!
             if st.button("🔍 Diagnóstico", key="diagnostico"):
                 st.write("**Checklist:**")
                 try:
