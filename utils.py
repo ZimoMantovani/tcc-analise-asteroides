@@ -82,7 +82,7 @@ def render_sidebar():
         st.markdown("---")
         
         # --- BLOCO 3: BOTÃO DE ATUALIZAÇÃO (ETL) ---
-        if st.button("🔄 Atualizar Dados", use_container_width=True):
+        if st.button("🔄 Atualizar Dados", width='stretch'):
             with st.spinner("📡 Buscando dados na NASA..."):
                 dados_brutos = extrair_dados_nasa(dias=7)
                 if dados_brutos:
