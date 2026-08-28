@@ -70,7 +70,7 @@ with col1:
         title="Distribuição por Nível de Risco",
         color_discrete_sequence=['#00ff00', '#88ff00', '#ffff00', '#ff8800', '#ff0000']
     )
-    st.plotly_chart(fig_pizza, width='stretch')
+    st.plotly_chart(fig_pizza, use_container_width=True)
 
 with col2:
     # Gráfico de barras - Categorias
@@ -83,7 +83,7 @@ with col2:
         color=categorias.values,
         color_continuous_scale='Reds'
     )
-    st.plotly_chart(fig_bar, width='stretch')
+    st.plotly_chart(fig_bar, use_container_width=True)
 
 st.divider()
 
@@ -105,7 +105,7 @@ for size in [0.010, 0.050, 0.300, 2.0, 10.0]:
     })
 
 df_categorias = pd.DataFrame(categorias_info)
-st.dataframe(df_categorias, width='stretch', hide_index=True)
+st.dataframe(df_categorias, use_container_width=True, hide_index=True)
 
 st.divider()
 
@@ -127,7 +127,7 @@ top_perigosos.columns = ['Nome', 'Índice de Risco', 'Nível', 'Diâmetro (km)',
 
 st.dataframe(
     top_perigosos,
-    width='stretch',
+    use_container_width=True,
     hide_index=True
 )
 
@@ -250,7 +250,7 @@ fig_scatter = px.scatter(
         'CRÍTICO': '#ff0000'
     }
 )
-st.plotly_chart(fig_scatter, width='stretch')
+st.plotly_chart(fig_scatter, use_container_width=True)
 
 st.divider()
 

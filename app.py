@@ -46,7 +46,7 @@ with col_esq:
         names=['Seguro', 'Perigoso'],
         color_discrete_sequence=['#00cc66', '#ff4444']
     )
-    st.plotly_chart(fig_pizza, width='stretch')
+    st.plotly_chart(fig_pizza, use_container_width=True)
 
 with col_dir:
     st.subheader("🏆 Top 5 Maiores Asteroides")
@@ -60,4 +60,4 @@ st.divider()
 # Próximas aproximações
 st.subheader("📅 Próximas Aproximações (7 dias)")
 proximos = df.head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
-st.dataframe(proximos, width='stretch', hide_index=True)
+st.dataframe(proximos, use_container_width=True, hide_index=True)

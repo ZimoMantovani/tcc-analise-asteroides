@@ -38,4 +38,4 @@ df_filtrado = df_filtrado[
 
 st.write(f"**{len(df_filtrado)} asteroides encontrados**")
 st.dataframe(df_filtrado[['nome', 'data_aproximacao', 'diametro_max_km', 'velocidade_kmh', 'distancia_lunar', 'perigoso']], 
-             width='stretch', height=500)
+             use_container_width=True, height=500)
