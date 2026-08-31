@@ -64,8 +64,8 @@ def render_sidebar():
         st.markdown("---")
 
         # --- BLOCO 3: BOTÃO DE ATUALIZAÇÃO (ETL) ---
-        if st.button("🔄 Atualizar Dados", use_container_width=True):
-            with st.spinner("📡 Buscando dados na NASA..."):
+        if st.button("Atualizar Dados", use_container_width=True):
+            with st.spinner("Buscando dados na NASA..."):
                 dados_brutos = extrair_dados_nasa(dias=7)
                 if dados_brutos:
                     df_novos = transformar_dados(dados_brutos)
@@ -90,15 +90,33 @@ def render_sidebar():
         try:
             with st.spinner("Verificando..."):
                 df_status = carregar_asteroides()
-                st.success(f"✅ {len(df_status)} asteroides")
-                ultima_coleta = pd.to_datetime(df_status['data_coleta'].max()).strftime('%d/%m/%Y %H:%M:%S')
-                st.caption(f"🕐 Última coleta: {ultima_coleta}")
+
+            ultima_coleta = pd.to_datetime(df_status['data_coleta'].max()).strftime('%d/%m %H:%M')
+            st.markdown(
+                "<div style=\""
+                "font-family: 'JetBrains Mono', monospace; "
+                "font-size: 0.78rem; "
+                "color: #00F0FF; "
+                "letter-spacing: 0.03em;"
+                "\">"
+                f"● SISTEMA ONLINE // {len(df_status)} OBJETOS // ATUALIZADO {ultima_coleta}"
+                "</div>",
+                unsafe_allow_html=True,
+            )
 
         except Exception as e:
-            st.error("❌ Erro de conexão")
+            st.markdown(
+                "<div style=\""
+                "font-family: 'JetBrains Mono', monospace; "
+                "font-size: 0.78rem; "
+                "color: #FF2A5F; "
+                "letter-spacing: 0.03em;"
+                "\">● SISTEMA OFFLINE // ERRO DE CONEXÃO</div>",
+                unsafe_allow_html=True,
+            )
             st.caption(f"Detalhes: {str(e)[:50]}...")
 
-            if st.button("🔍 Diagnóstico", key="diagnostico"):
+            if st.button("Diagnóstico", key="diagnostico"):
                 st.write("**Checklist:**")
 
                 engine = get_database_connection()
