@@ -90,7 +90,7 @@ with col_esq:
         yaxis=dict(gridcolor='rgba(0,240,255,0.08)'),
         margin=dict(t=10, b=10, l=10, r=10),
     )
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')
 
 with col_dir:
     st.subheader("Top 5 // Maiores Objetos Detectados", divider="blue")
@@ -125,4 +125,4 @@ st.divider()
 # Próximas aproximações
 st.subheader("Próximas Aproximações // Janela de 7 Dias", divider="blue")
 proximos = df.head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
-st.dataframe(proximos, use_container_width=True, hide_index=True)
+st.dataframe(proximos, width='stretch', hide_index=True)
