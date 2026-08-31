@@ -6,7 +6,9 @@ import os
 # Importa as funções do seu ETL para o botão funcionar
 from etl_completo import extrair_dados_nasa, transformar_dados, carregar_no_banco
 from database import get_engine
+from PIL import Image
 
+icone = Image.open("images/logo.png")
 
 @st.cache_resource
 def get_database_connection():
@@ -49,23 +51,36 @@ def render_sidebar():
 
     with st.sidebar:
         # --- BLOCO 1: LOGO E TÍTULOS ---
-        st.image("https://www.nasa.gov/wp-content/uploads/2023/03/nasa-logo-web-rgb.png", width=200)
-        st.markdown("### 🌍 NEO Monitor")
-        st.markdown("**Near Earth Objects**")
+        # Substituído por uma versão em vetor SVG com fundo 100% transparente
+        st.image("images\logo.png", width='stretch')
+        
+        # Tipografia estilizada no estilo "Terminal/HUD" para combinar com o sistema
+        st.markdown(
+            """
+            <div style="font-family: 'JetBrains Mono', monospace; margin-top: 10px;">
+                <h3 style="color: #FFFFFF; margin-bottom: 0px; padding-bottom: 0px;">NEO MONITOR</h3>
+                <p style="color: #888; font-size: 0.85rem; margin-top: 0px;"><i>Near Earth Objects</i></p>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
         st.markdown("---")
 
         # --- BLOCO 2: LINKS DE NAVEGAÇÃO ---
         st.caption("Navegação")
+        
+        # Adicionados ícones em cada link para reconhecimento visual rápido
         st.page_link("app.py", label="Home")
-        st.page_link("pages/2_Estatisticas.py", label="Estatisticas")
+        st.page_link("pages/2_Estatisticas.py", label="Estatísticas")
         st.page_link("pages/3_Explorador.py", label="Explorador")
-        st.page_link("pages/4_Analise_Riscos.py", label="Analise de Riscos")
-        st.page_link("pages/5_Sobre.py", label="Sobre")
+        st.page_link("pages/4_Analise_Riscos.py", label="Análise de Riscos")
+        st.page_link("pages/5_Sobre.py", label="Especificações")
         st.markdown("---")
 
         # --- BLOCO 3: BOTÃO DE ATUALIZAÇÃO (ETL) ---
-        if st.button("Atualizar Dados", use_container_width=True):
-            with st.spinner("Buscando dados na NASA..."):
+        # Botão ganhou o type="primary" para maior destaque na interface e nome focado em ação
+        if st.button("INICIAR VARREDURA (ATUALIZAR)", type="primary", use_container_width=True):
+            with st.spinner("Extraindo telemetria da NASA..."):
                 dados_brutos = extrair_dados_nasa(dias=7)
                 if dados_brutos:
                     df_novos = transformar_dados(dados_brutos)
@@ -88,7 +103,7 @@ def render_sidebar():
         st.caption("**Status do Sistema:**")
 
         try:
-            with st.spinner("Verificando..."):
+            with st.spinner("Verificando integridade..."):
                 df_status = carregar_asteroides()
 
             ultima_coleta = pd.to_datetime(df_status['data_coleta'].max()).strftime('%d/%m %H:%M')
@@ -131,8 +146,6 @@ def render_sidebar():
                 except Exception:
                     st.write("❌ Tabela 'asteroides': Não existe ou está vazia")
 
-                # 🔒 Removido: antes exibia os 3 primeiros caracteres da senha.
-                # Nunca exponha nem um fragmento de credencial numa interface pública.
                 if os.getenv('DB_PASSWORD'):
                     st.write("✅ Senha carregada")
                 else:

@@ -6,9 +6,10 @@ from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 
 from estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
-
+from PIL import Image
+icone = Image.open("images/logo.png")
 # Configuração da página (deve ser a primeira chamada Streamlit)
-st.set_page_config(page_title="Home - NEO Monitor", page_icon="🏠", layout="wide")
+st.set_page_config(page_title="Home - NEO Monitor", page_icon=icone, layout="wide")
 
 # Fundo escuro com estrelas + animações de entrada
 aplicar_tema_espacial()
