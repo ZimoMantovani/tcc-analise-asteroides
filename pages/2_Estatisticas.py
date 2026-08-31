@@ -61,7 +61,7 @@ with tab1:
             labels={'diametro_max_km': 'Diâmetro Máximo (km)', 'count': 'Quantidade'}
         )
         fig_hist.update_layout(**layout_espacial)
-        st.plotly_chart(fig_hist, use_container_width=True)
+        st.plotly_chart(fig_hist, width='stretch')
         
     with col2:
         st.subheader("Top 10 Maiores", divider="blue")
@@ -75,7 +75,7 @@ with tab1:
             labels={'nome': 'Asteroide', 'diametro_max_km': 'Diâmetro (km)'}
         )
         fig_bar.update_layout(**layout_espacial)
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width='stretch')
 
 with tab2:
     st.subheader("Relação // Tamanho × Velocidade", divider="blue")
@@ -98,7 +98,7 @@ with tab2:
         marker=dict(size=10, line=dict(width=1, color='rgba(255,255,255,0.3)'))
     )
     fig_scatter.update_layout(**layout_espacial)
-    st.plotly_chart(fig_scatter, use_container_width=True)
+    st.plotly_chart(fig_scatter, width='stretch')
 
 with tab3:
     st.subheader("Distribuição de Distâncias Lunares", divider="blue")
@@ -116,4 +116,4 @@ with tab3:
     fig_box.update_layout(**layout_espacial)
     # Remove o eixo X do boxplot para ficar mais limpo já que a cor e legenda já indicam
     fig_box.update_xaxes(showticklabels=False)
-    st.plotly_chart(fig_box, use_container_width=True)
+    st.plotly_chart(fig_box, width='stretch')

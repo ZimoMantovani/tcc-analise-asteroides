@@ -104,7 +104,7 @@ if len(df_filtrado) > 0:
     with st.expander("📂 VER BASE DE DADOS COMPLETA (TABELA)"):
         st.dataframe(
             df_filtrado[['nome', 'data_aproximacao', 'diametro_max_km', 'velocidade_kmh', 'distancia_lunar', 'perigoso']], 
-            use_container_width=True, 
+            width='stretch', 
             height=400,
             hide_index=True
         )

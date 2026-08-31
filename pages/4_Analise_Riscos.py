@@ -116,7 +116,7 @@ with col1:
     )
     fig_pizza.update_traces(marker=dict(line=dict(color='#0B101E', width=2)))
     fig_pizza.update_layout(**layout_espacial)
-    st.plotly_chart(fig_pizza, use_container_width=True)
+    st.plotly_chart(fig_pizza, width='stretch')
 
 with col2:
     # Gráfico de barras - Categorias
@@ -133,7 +133,7 @@ with col2:
         color_continuous_scale=['#00F0FF', '#FF2A5F'] # Gradiente Ciano -> Rosa
     )
     fig_bar.update_layout(**layout_espacial)
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width='stretch')
 
 st.divider()
 
@@ -267,7 +267,7 @@ fig_scatter.update_traces(
     opacity=0.85
 )
 fig_scatter.update_layout(**layout_espacial)
-st.plotly_chart(fig_scatter, use_container_width=True)
+st.plotly_chart(fig_scatter, width='stretch')
 
 st.write("")
 
@@ -285,7 +285,7 @@ with col_tabela:
     top_perigosos['distancia_lunar'] = top_perigosos['distancia_lunar'].apply(lambda x: f"{x:.2f}")
     top_perigosos.columns = ['Nome do Objeto', 'Índice (0-100)', 'Nível', 'Diâmetro (km)', 'Distância (LD)']
 
-    st.dataframe(top_perigosos, use_container_width=True, hide_index=True)
+    st.dataframe(top_perigosos, width='stretch', hide_index=True)
 
 with col_metodo:
     st.subheader("📖 Metodologia")
