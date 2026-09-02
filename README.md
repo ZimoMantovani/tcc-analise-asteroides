@@ -178,23 +178,29 @@ tcc-analise-asteroides/
 │
 ├── 📄 app.py                        # Ponto de entrada (Home) do Streamlit
 ├── 📂 pages/                        # Páginas adicionais do Dashboard
-│   ├── 1_Home.py
 │   ├── 2_Estatisticas.py
 │   ├── 3_Explorador.py
 │   ├── 4_Analise_Riscos.py
 │   └── 5_Sobre.py
 │
+├── 📄 database.py                   # Conexão central com o PostgreSQL (engine SQLAlchemy)
 ├── 📄 etl_completo.py               # Script de extração, transformação e carga (NASA API -> BD)
 ├── 📄 modelo_ia.py                  # Script para treino e inferência do modelo Random Forest
 ├── 📄 modelo_asteroides.joblib      # Modelo de IA serializado
 ├── 📄 analise_riscos.py             # Lógica de cálculo de risco e energia de impacto
-├── 📄 utils.py                      # Funções auxiliares gerais
-├── 📄 curiosidades_ia.py            # Geração de curiosidades astronômicas
+├── 📄 utils.py                      # Funções auxiliares gerais (cache, sidebar, botão de ETL)
+├── 📄 estilo.py                     # Tema visual (CSS espacial/HUD) e capa com imagem APOD da NASA
+├── 📄 curiosidades_ia.py            # Geração de textos educacionais baseados em regras
 │
-├── 📄 neo_v2.csv                    # Dataset de backup/treinamento
+├── 📂 images/                       # Logo e demais imagens estáticas
+├── 📂 .streamlit/                   # Configuração de tema do Streamlit (config.toml)
+├── 📄 neo_v2.csv                    # Dataset de treinamento (histórico NASA, ~90k objetos)
 ├── 📄 .env                          # Configurações locais (Ignorado pelo Git)
+├── 📄 LICENSE                       # Licença MIT
 └── 📄 README.md                     # Documentação principal
 ```
+
+> **Nota:** `app.py` é a própria Home — não existe uma página separada `1_Home.py` dentro de `pages/`.
 
 ## 🤝 Contribuindo
 

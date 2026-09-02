@@ -52,7 +52,7 @@ def render_sidebar():
     with st.sidebar:
         # --- BLOCO 1: LOGO E TÍTULOS ---
         # Substituído por uma versão em vetor SVG com fundo 100% transparente
-        st.image("images\logo.png", width='stretch')
+        st.image("images\\logo.png", width='stretch')
         
         # Tipografia estilizada no estilo "Terminal/HUD" para combinar com o sistema
         st.markdown(

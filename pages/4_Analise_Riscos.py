@@ -225,10 +225,19 @@ if asteroide_selecionado:
         """
     ):
         with st.spinner("Processando rede neural predictiva..."):
+            # Usa a magnitude absoluta real coletada da NASA. Cai para o valor
+            # padrão (20.0) só se a coluna não existir ainda (banco antigo) ou
+            # se esse asteroide específico ainda não teve a magnitude coletada
+            # (não reapareceu em nenhuma varredura desde a migração).
+            magnitude = dados.get('magnitude_absoluta')
+            if magnitude is None or pd.isna(magnitude):
+                magnitude = 20.0
+
             score_ia = prever_risco_ia(
                 diametro_max=dados['diametro_max_km'],
                 velocidade=dados['velocidade_kmh'],
-                distancia=dados['distancia_km']
+                distancia=dados['distancia_km'],
+                magnitude_absoluta=magnitude
             )
             
             texto_educacional = GeradorCuriosidades.gerar_fatos_educacionais(

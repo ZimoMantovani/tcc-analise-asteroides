@@ -67,6 +67,11 @@ def transformar_dados(data):
                     'diametro_min_km': neo['estimated_diameter']['kilometers']['estimated_diameter_min'],
                     'diametro_max_km': neo['estimated_diameter']['kilometers']['estimated_diameter_max'],
 
+                    # Magnitude absoluta (brilho intrínseco): é uma das 4 features usadas
+                    # pelo modelo de IA (modelo_ia.py). Antes não era coletada e o modelo
+                    # sempre recebia um valor fixo (20.0) em produção.
+                    'magnitude_absoluta': neo['absolute_magnitude_h'],
+
                     'perigoso': neo['is_potentially_hazardous_asteroid'],
                     'sentry_object': neo.get('is_sentry_object', False),
 
@@ -125,6 +130,15 @@ def carregar_no_banco(df):
             conn.execute(text("""
                 ALTER TABLE asteroides
                 ADD COLUMN IF NOT EXISTS data_primeira_deteccao TIMESTAMP DEFAULT NOW();
+            """))
+
+            # 2b. Garante a coluna magnitude_absoluta para bancos criados antes dessa
+            # coluna existir. Registros antigos ficam com NULL até reaparecerem numa
+            # nova varredura (a NASA feed só cobre a janela de dias pedida no momento);
+            # o modelo de IA já trata esse caso caindo para o valor padrão (20.0).
+            conn.execute(text("""
+                ALTER TABLE asteroides
+                ADD COLUMN IF NOT EXISTS magnitude_absoluta FLOAT;
             """))
 
             # 3. Garante que 'id_neo' é Chave Primária no PostgreSQL
