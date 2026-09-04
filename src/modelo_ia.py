@@ -5,8 +5,8 @@ from sklearn.metrics import accuracy_score
 import joblib
 import os
 
-MODEL_PATH = 'modelo_asteroides.joblib'
-DATA_PATH = 'neo_v2.csv'
+MODEL_PATH = 'models\\modelo_asteroides.joblib'
+DATA_PATH = 'data\\neo_v2.csv'
 
 def treinar_modelo():
     """

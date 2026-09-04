@@ -53,6 +53,9 @@ def transformar_dados(data):
     print("\n🔄 Processando dados...")
 
     asteroides = []
+    
+    # 1. Captura o momento exato UMA ÚNICA VEZ para todo o lote
+    momento_coleta = datetime.now()
 
     for date, neos in data['near_earth_objects'].items():
         for neo in neos:
@@ -67,11 +70,7 @@ def transformar_dados(data):
                     'diametro_min_km': neo['estimated_diameter']['kilometers']['estimated_diameter_min'],
                     'diametro_max_km': neo['estimated_diameter']['kilometers']['estimated_diameter_max'],
 
-                    # Magnitude absoluta (brilho intrínseco): é uma das 4 features usadas
-                    # pelo modelo de IA (modelo_ia.py). Antes não era coletada e o modelo
-                    # sempre recebia um valor fixo (20.0) em produção.
                     'magnitude_absoluta': neo['absolute_magnitude_h'],
-
                     'perigoso': neo['is_potentially_hazardous_asteroid'],
                     'sentry_object': neo.get('is_sentry_object', False),
 
@@ -86,7 +85,9 @@ def transformar_dados(data):
                     'velocidade_kms': float(aproximacao['relative_velocity']['kilometers_per_second']),
 
                     'orbita_corpo': aproximacao['orbiting_body'],
-                    'data_coleta': datetime.now(),
+                    
+                    # 2. Usa a variável criada fora do loop
+                    'data_coleta': momento_coleta,
 
                     'nasa_url': neo['nasa_jpl_url']
                 }
