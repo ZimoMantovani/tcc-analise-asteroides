@@ -1,0 +1,7 @@
+venvNEO/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.git/
+.gitignore

@@ -75,21 +75,23 @@ if len(df_filtrado) > 0:
         icone = "⚠️" if row['perigoso'] else "☄️"
         
         with col_atual:
-            # Card customizado para cada asteroide
-            with stylable_container(
-                key=f"card_{idx}",
-                css_styles=f"""
-                    {{
-                        border: 1px solid {cor_borda};
-                        border-radius: 0.75rem;
-                        padding: 1.2rem;
-                        background-color: rgba(20, 27, 46, 0.55);
-                        backdrop-filter: blur(6px);
-                        box-shadow: 0 0 15px {cor_sombra};
-                        margin-bottom: 1.5rem;
-                    }}
-                """
-            ):
+            # Injeta o CSS que vai estilizar o container nativo pela sua 'key'
+            st.markdown(f"""
+                <style>
+                .st-key-card_{idx} {{
+                    border: 1px solid {cor_borda};
+                    border-radius: 0.75rem;
+                    padding: 1.2rem;
+                    background-color: rgba(20, 27, 46, 0.55);
+                    backdrop-filter: blur(6px);
+                    box-shadow: 0 0 15px {cor_sombra};
+                    margin-bottom: 1.5rem;
+                }}
+                </style>
+            """, unsafe_allow_html=True)
+            
+            # Substituímos o stylable_container pelo st.container nativo
+            with st.container(key=f"card_{idx}"):
                 st.markdown(f"#### {icone} {row['nome']}")
                 st.markdown(hud_tag(tag_texto, cor=tag_cor), unsafe_allow_html=True)
                 st.write("")

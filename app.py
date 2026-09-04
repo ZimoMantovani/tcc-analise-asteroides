@@ -96,20 +96,22 @@ with col_esq:
 with col_dir:
     st.subheader("Top 5 // Maiores Objetos Detectados", divider="blue")
 
-    # Card de vidro com acento ciano, mesmo tratamento dos cards de métrica
-    with stylable_container(
-        key="top5_container",
-        css_styles="""
-            {
-                border: 1px solid rgba(0, 240, 255, 0.25);
-                border-radius: 0.75rem;
-                padding: 1.2rem 1.5rem;
-                background-color: rgba(20, 27, 46, 0.55);
-                backdrop-filter: blur(6px);
-                box-shadow: 0 0 16px rgba(0, 240, 255, 0.06);
-            }
-            """,
-    ):
+    # Injeta o CSS apontando para a key 'top5_container'
+    st.markdown("""
+        <style>
+        .st-key-top5_container {
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 0.75rem;
+            padding: 1.2rem 1.5rem;
+            background-color: rgba(20, 27, 46, 0.55);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.06);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Card de vidro com acento ciano usando o container nativo
+    with st.container(key="top5_container"):
         top5 = df.nlargest(5, 'diametro_max_km')[['nome', 'diametro_max_km', 'perigoso']]
         for idx, row in top5.iterrows():
             if row['perigoso']:

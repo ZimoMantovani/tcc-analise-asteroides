@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: neo_postgres
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-neo_monitor}
+    ports:
+      - "5432:5432"
+    volumes:
+      - neo_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: neo_streamlit
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - TZ=America/Sao_Paulo
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_NAME=${DB_NAME:-neo_monitor}
+      - NASA_API_KEY=${NASA_API_KEY}
+    volumes:
+      # Mapeamento local para hot-reload. Altere o código no seu editor e veja no browser sem rebuildar.
+      - ./src:/app/src
+      - ./pages:/app/pages
+      - ./app.py:/app/app.py
+
+volumes:
+  neo_pgdata:
