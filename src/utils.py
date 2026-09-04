@@ -4,11 +4,11 @@ from sqlalchemy import text
 import os
 
 # Importa as funções do seu ETL para o botão funcionar
-from etl_completo import extrair_dados_nasa, transformar_dados, carregar_no_banco
-from database import get_engine
+from src.etl_completo import extrair_dados_nasa, transformar_dados, carregar_no_banco
+from src.database import get_engine
 from PIL import Image
 
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 
 @st.cache_resource
 def get_database_connection():
@@ -52,7 +52,7 @@ def render_sidebar():
     with st.sidebar:
         # --- BLOCO 1: LOGO E TÍTULOS ---
         # Substituído por uma versão em vetor SVG com fundo 100% transparente
-        st.image("images\\logo.png", width='stretch')
+        st.image("assets\\logo.png", width='stretch')
         
         # Tipografia estilizada no estilo "Terminal/HUD" para combinar com o sistema
         st.markdown(
@@ -99,34 +99,45 @@ def render_sidebar():
 
         st.markdown("---")
 
-        # --- BLOCO 4: STATUS DO SISTEMA E DIAGNÓSTICO ---
+# --- BLOCO 4: STATUS DO SISTEMA E DIAGNÓSTICO ---
         st.caption("**Status do Sistema:**")
 
         try:
             with st.spinner("Verificando integridade..."):
                 df_status = carregar_asteroides()
 
-            ultima_coleta = pd.to_datetime(df_status['data_coleta'].max()).strftime('%d/%m %H:%M')
+            # 1. Pega a data mais recente registrada no banco
+            max_data = df_status['data_coleta'].max()
+            
+            # 2. Filtra o dataframe apenas para a última coleta e conta as linhas (Atual)
+            qtd_atual = len(df_status[df_status['data_coleta'] == max_data])
+            
+            # 3. Conta o tamanho total do dataframe (Total)
+            qtd_total = len(df_status)
+
+            ultima_coleta = pd.to_datetime(max_data).strftime('%d/%m %H:%M')
+            
             st.markdown(
-                "<div style=\""
-                "font-family: 'JetBrains Mono', monospace; "
-                "font-size: 0.78rem; "
-                "color: #00F0FF; "
-                "letter-spacing: 0.03em;"
-                "\">"
-                f"● SISTEMA ONLINE // {len(df_status)} OBJETOS // ATUALIZADO {ultima_coleta}"
-                "</div>",
+                f"""
+                <div style="font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em; line-height: 1.2;">
+                    <div style="font-size: 0.78rem; color: #00F0FF;">
+                        ● SISTEMA ONLINE // {qtd_atual} RECENTES // ATUALIZADO {ultima_coleta}
+                    </div>
+                    <div style="font-size: 0.65rem; color: rgba(0, 240, 255, 0.4); padding-top: 3px;">
+                        Total registrado no banco: {qtd_total} objetos
+                    </div>
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
 
         except Exception as e:
             st.markdown(
-                "<div style=\""
-                "font-family: 'JetBrains Mono', monospace; "
-                "font-size: 0.78rem; "
-                "color: #FF2A5F; "
-                "letter-spacing: 0.03em;"
-                "\">● SISTEMA OFFLINE // ERRO DE CONEXÃO</div>",
+                """
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: #FF3366; letter-spacing: 0.03em;">
+                    ● SISTEMA OFFLINE // DADOS INDISPONÍVEIS
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
             st.caption(f"Detalhes: {str(e)[:50]}...")

@@ -1,11 +1,11 @@
 import streamlit as st
 import plotly.express as px
-from utils import carregar_asteroides, render_sidebar
-from estilo import aplicar_tema_espacial, renderizar_hero
+from src.utils import carregar_asteroides, render_sidebar
+from src.estilo import aplicar_tema_espacial, renderizar_hero
 import warnings
 from PIL import Image
 
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Configuração da página

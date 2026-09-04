@@ -1,9 +1,9 @@
 import streamlit as st
-from utils import render_sidebar
-from estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
+from src.utils import render_sidebar
+from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
 from streamlit_extras.stylable_container import stylable_container
 from PIL import Image
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 
 st.set_page_config(page_title="Sobre - NEO Monitor", page_icon=icone, layout="wide")
 

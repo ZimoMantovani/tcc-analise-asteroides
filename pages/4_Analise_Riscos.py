@@ -2,16 +2,16 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
-from utils import carregar_asteroides, render_sidebar
-from analise_riscos import AnalisadorRiscos
-from modelo_ia import prever_risco_ia
-from curiosidades_ia import GeradorCuriosidades
-from estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
+from src.utils import carregar_asteroides, render_sidebar
+from src.analise_riscos import AnalisadorRiscos
+from src.modelo_ia import prever_risco_ia
+from src.curiosidades_ia import GeradorCuriosidades
+from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 from PIL import Image
 
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 import warnings
 
 warnings.simplefilter(action='ignore', category=FutureWarning)

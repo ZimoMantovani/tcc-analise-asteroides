@@ -1,13 +1,13 @@
 import streamlit as st
 import plotly.express as px
-from utils import carregar_asteroides, render_sidebar
+from src.utils import carregar_asteroides, render_sidebar
 
 from streamlit_extras.metric_cards import style_metric_cards
 from streamlit_extras.stylable_container import stylable_container
 
-from estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
+from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
 from PIL import Image
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 # Configuração da página (deve ser a primeira chamada Streamlit)
 st.set_page_config(page_title="Home - NEO Monitor", page_icon=icone, layout="wide")
 

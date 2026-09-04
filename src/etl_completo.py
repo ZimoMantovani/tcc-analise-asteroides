@@ -4,7 +4,7 @@ from sqlalchemy import text
 import os
 from datetime import datetime, timedelta
 
-from database import get_engine
+from src.database import get_engine
 
 # ⚠️ IMPORTANTE: nada de configuração roda aqui no nível do módulo.
 # utils.py faz "from etl_completo import ..." e isso EXECUTA o arquivo

@@ -1,11 +1,11 @@
 import streamlit as st
-from utils import carregar_asteroides, render_sidebar
-from estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
+from src.utils import carregar_asteroides, render_sidebar
+from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
 from streamlit_extras.stylable_container import stylable_container
 import warnings
 from PIL import Image
 
-icone = Image.open("images/logo.png")
+icone = Image.open("assets/logo.png")
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
