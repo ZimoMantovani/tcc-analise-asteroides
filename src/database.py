@@ -1,24 +1,30 @@
 """
 Módulo central de conexão com o banco de dados.
-
-Usado por etl_completo.py, utils.py e qualquer outro script do projeto,
-para garantir que exista um único lugar de configuração da string de
-conexão e das opções da engine (encoding, etc). Antes, essa lógica
-estava duplicada em dois arquivos, com valores diferentes entre eles
-(um lia tudo do .env, o outro tinha host/banco fixos no código).
 """
 import os
-from urllib.parse import quote_plus
-
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, quote_plus
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 
 load_dotenv()
 
-_engine = None  # cache simples em nível de módulo, reaproveitado entre chamadas
-
+_engine = None
 
 def _montar_connection_string() -> str:
+    # 1. Tenta usar a URL direta (Nuvem / Supabase)
+    database_url = os.getenv('DATABASE_URL')
+    if database_url:
+        print("☁️ [Rede] Rota NUVEM (Supabase) detectada...")
+        
+        # Garante sslmode=require na URL de forma segura
+        parsed = urlparse(database_url)
+        query = parse_qs(parsed.query)
+        query.setdefault("sslmode", ["require"])
+        new_query = urlencode(query, doseq=True)
+        return urlunparse(parsed._replace(query=new_query))
+
+    # 2. Fallback para ambiente Local (Docker Compose)
+    print("💻 [Rede] Rota LOCAL (Docker) ativada...")
     usuario = os.getenv('DB_USER')
     senha = os.getenv('DB_PASSWORD')
     host = os.getenv('DB_HOST')
@@ -27,41 +33,33 @@ def _montar_connection_string() -> str:
 
     faltando = [
         nome for nome, valor in {
-            'DB_USER': usuario,
-            'DB_PASSWORD': senha,
-            'DB_HOST': host,
-            'DB_PORT': porta,
-            'DB_NAME': banco,
-        }.items()
-        if not valor
+            'DB_USER': usuario, 'DB_PASSWORD': senha, 'DB_HOST': host, 
+            'DB_PORT': porta, 'DB_NAME': banco
+        }.items() if not valor
     ]
 
     if faltando:
-        raise ValueError(
-            f"Variáveis de ambiente faltando: {', '.join(faltando)}. "
-            "Confira se o arquivo .env existe na raiz do projeto e está "
-            "preenchido (ou se o script está sendo executado a partir da "
-            "pasta correta, já que load_dotenv() procura o .env no diretório atual)."
-        )
+        raise ValueError(f"Variáveis locais faltando no .env: {', '.join(faltando)}")
 
     return f"postgresql://{usuario}:{quote_plus(senha)}@{host}:{porta}/{banco}"
 
-
 def get_engine():
-    """
-    Retorna a engine SQLAlchemy do projeto (criada uma única vez e reaproveitada).
-
-    client_encoding='utf8' evita o erro de decode que aparecia ao salvar
-    dados com acentuação (bytes fora de UTF-8 vindos de mensagens do servidor).
-    """
     global _engine
     if _engine is None:
         connection_string = _montar_connection_string()
-        _engine = create_engine(
-            connection_string,
-            connect_args={
-                'client_encoding': 'utf8',
-                'options': '-c lc_messages=C',
-            },
-        )
+        
+        try:
+            _engine = create_engine(
+                connection_string,
+                connect_args={'client_encoding': 'utf8', 'options': '-c lc_messages=C'}
+            )
+            # Força um teste de conexão rápido
+            with _engine.connect() as conn:
+                pass
+            print("✅ [Banco] Conexão estabelecida com sucesso!")
+            
+        except Exception as e:
+            print("\n❌ ERRO DE CONEXÃO: Verifique a senha ou a URL no seu .env!")
+            raise e
+            
     return _engine
