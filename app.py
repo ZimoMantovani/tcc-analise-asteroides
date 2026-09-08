@@ -11,9 +11,12 @@ icone = Image.open("assets/logo.png")
 # Configuração da página (deve ser a primeira chamada Streamlit)
 st.set_page_config(page_title="Home - NEO Monitor", page_icon=icone, layout="wide")
 
-if "DATABASE_URL" in st.secrets:
-    os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
-
+try:
+    if "DATABASE_URL" in st.secrets:
+        os.environ["DATABASE_URL"] = st.secrets["DATABASE_URL"]
+except Exception:
+    # Se o arquivo secrets não existir (ambiente local/Docker), apenas ignora
+    pass
 # Fundo escuro com estrelas + animações de entrada
 aplicar_tema_espacial()
 

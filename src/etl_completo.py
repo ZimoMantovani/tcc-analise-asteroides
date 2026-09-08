@@ -3,6 +3,7 @@ import pandas as pd
 from sqlalchemy import text
 import os
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from src.database import get_engine
 
@@ -55,7 +56,7 @@ def transformar_dados(data):
     asteroides = []
     
     # 1. Captura o momento exato UMA ÚNICA VEZ para todo o lote
-    momento_coleta = datetime.now()
+    momento_coleta = datetime.now(ZoneInfo("America/Sao_Paulo"))
 
     for date, neos in data['near_earth_objects'].items():
         for neo in neos:
