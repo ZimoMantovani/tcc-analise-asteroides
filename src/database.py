@@ -59,6 +59,11 @@ def get_engine():
             print("✅ [Banco] Conexão estabelecida com sucesso!")
             
         except Exception as e:
+            # Importante: desfaz o cache em caso de falha. Sem isso, uma tentativa
+            # com credenciais erradas fica "presa" em _engine para sempre (até o
+            # processo reiniciar do zero), e trocar a senha no secrets não teria
+            # efeito nenhum até um Reboot completo do app.
+            _engine = None
             print("\n❌ ERRO DE CONEXÃO: Verifique a senha ou a URL no seu .env!")
             raise e
             
