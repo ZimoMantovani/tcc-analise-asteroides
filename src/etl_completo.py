@@ -56,7 +56,7 @@ def transformar_dados(data):
     asteroides = []
     
     # 1. Captura o momento exato UMA ÚNICA VEZ para todo o lote
-    momento_coleta = datetime.now(ZoneInfo("America/Sao_Paulo"))
+    momento_coleta = datetime.now(ZoneInfo("America/Sao_Paulo")).replace(tzinfo=None)
 
     for date, neos in data['near_earth_objects'].items():
         for neo in neos:
