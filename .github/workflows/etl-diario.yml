@@ -1,0 +1,31 @@
+name: ETL Diário NEO Monitor
+
+on:
+  schedule:
+    # Um horário de madrugada excelente para processamento de dados.
+    - cron: "0 6 * * *"
+  
+  # Este comando permite que você também dispare o ETL manualmente pelo botão no site do GitHub
+  workflow_dispatch: {}
+
+jobs:
+  rodar-etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Instalar dependências
+        run: pip install --no-cache-dir -r requirements.txt
+
+      - name: Executar Pipeline ETL
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NASA_API_KEY: ${{ secrets.NASA_API_KEY }}
+        # Usando a flag -m para evitar aquele velho erro de "ModuleNotFoundError"
+        run: python -m src.etl_completo
