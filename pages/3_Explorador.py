@@ -1,7 +1,6 @@
 import streamlit as st
 from src.utils import carregar_asteroides, render_sidebar
 from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
-from streamlit_extras.stylable_container import stylable_container
 import warnings
 from PIL import Image
 
@@ -90,7 +89,6 @@ if len(df_filtrado) > 0:
                 </style>
             """, unsafe_allow_html=True)
             
-            # Substituímos o stylable_container pelo st.container nativo
             with st.container(key=f"card_{idx}"):
                 st.markdown(f"#### {icone} {row['nome']}")
                 st.markdown(hud_tag(tag_texto, cor=tag_cor), unsafe_allow_html=True)

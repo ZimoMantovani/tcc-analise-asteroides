@@ -1,7 +1,6 @@
 import streamlit as st
 from src.utils import render_sidebar
 from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
-from streamlit_extras.stylable_container import stylable_container
 from PIL import Image
 icone = Image.open("assets/logo.png")
 
@@ -43,19 +42,21 @@ with col_esq:
 with col_dir:
     st.subheader("Stack Tecnológica", divider="blue")
     
-    with stylable_container(
-        key="tech_stack",
-        css_styles="""
-            {
-                border: 1px solid rgba(0, 240, 255, 0.25);
-                border-radius: 0.75rem;
-                padding: 1.5rem;
-                background-color: rgba(20, 27, 46, 0.55);
-                backdrop-filter: blur(6px);
-                box-shadow: 0 0 16px rgba(0, 240, 255, 0.06);
-            }
-        """
-    ):
+# Injeta o CSS apontando para a key 'tech_stack'
+    st.markdown("""
+        <style>
+        .st-key-tech_stack {
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            background-color: rgba(20, 27, 46, 0.55);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.06);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    with st.container(key="tech_stack"):
         st.markdown(f"{hud_tag('BACKEND', cor='#00F0FF')} Python, SQLAlchemy, Pandas", unsafe_allow_html=True)
         st.write("")
         st.markdown(f"{hud_tag('FRONTEND', cor='#FF2A5F')} Streamlit, Plotly, HTML/CSS", unsafe_allow_html=True)
@@ -71,19 +72,23 @@ st.divider()
 # Seção do Desenvolvedor (Estilo "ID Card")
 st.subheader("Sobre o Desenvolvedor", divider="blue")
 
-with stylable_container(
-    key="dev_card",
-    css_styles="""
-        {
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #00F0FF;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            background: linear-gradient(90deg, rgba(0, 240, 255, 0.05) 0%, rgba(20, 27, 46, 0.5) 100%);
-            backdrop-filter: blur(10px);
-        }
-    """
-):
+st.divider()
+
+# Injeta o CSS apontando para a key 'dev_card'
+st.markdown("""
+    <style>
+    .st-key-dev_card {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-left: 4px solid #00F0FF;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        background: linear-gradient(90deg, rgba(0, 240, 255, 0.05) 0%, rgba(20, 27, 46, 0.5) 100%);
+        backdrop-filter: blur(10px);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+with st.container(key="dev_card"):
     c1, c2 = st.columns([2, 1])
     
     with c1:

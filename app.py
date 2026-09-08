@@ -3,7 +3,6 @@ import plotly.express as px
 from src.utils import carregar_asteroides, render_sidebar
 
 from streamlit_extras.metric_cards import style_metric_cards
-from streamlit_extras.stylable_container import stylable_container
 
 from src.estilo import aplicar_tema_espacial, renderizar_hero, hud_tag
 from PIL import Image
