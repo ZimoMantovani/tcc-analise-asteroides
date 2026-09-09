@@ -39,12 +39,18 @@ def main() -> None:
         page.goto(APP_URL, wait_until="domcontentloaded", timeout=60_000)
         page.wait_for_timeout(4000)
 
+        # ---------------------------------------------------------
+        # NOVO: Mapeia o iframe onde o app do Streamlit realmente roda
+        # ---------------------------------------------------------
+        frame = page.frame_locator('iframe[title="streamlitApp"]')
+
         wake_btn = page.get_by_role("button", name=WAKE_BUTTON)
         if wake_btn.count() > 0:
             log("App estava dormindo. Clicando para acordar...")
             wake_btn.click()
             try:
-                page.get_by_role("button", name=SCAN_BUTTON).wait_for(
+                # O botão de varredura fica DENTRO do frame
+                frame.get_by_role("button", name=SCAN_BUTTON).wait_for(
                     state="visible", timeout=COLD_START_TIMEOUT_MS
                 )
                 log("App acordou e a página carregou.")
@@ -53,7 +59,8 @@ def main() -> None:
         else:
             log("App já estava acordado.")
 
-        scan_btn = page.get_by_role("button", name=SCAN_BUTTON)
+        # Busca o botão de varredura DENTRO do frame
+        scan_btn = frame.get_by_role("button", name=SCAN_BUTTON)
         try:
             scan_btn.wait_for(state="visible", timeout=30_000)
         except Exception:
@@ -62,9 +69,9 @@ def main() -> None:
         scan_btn.click()
         log("Cliquei em 'INICIAR VARREDURA (ATUALIZAR)', aguardando conclusão...")
 
-        # Espera o spinner "Extraindo telemetria da NASA..." sumir, se der tempo de pegar
+        # Espera o spinner sumir (também dentro do frame)
         try:
-            page.get_by_text("Extraindo telemetria da NASA").wait_for(
+            frame.get_by_text("Extraindo telemetria da NASA").wait_for(
                 state="hidden", timeout=SCAN_TIMEOUT_MS
             )
         except Exception:
