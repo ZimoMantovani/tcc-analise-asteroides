@@ -1,0 +1,40 @@
+name: Keep Alive + Atualizar Dados
+
+on:
+  schedule:
+    # Community Cloud tolera antes de hibernar o app.
+    - cron: "0 */6 * * *"
+
+  # Permite disparar manualmente pelo botão no site do GitHub
+  workflow_dispatch: {}
+
+jobs:
+  acordar-e-atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_URL: https://neo-analyser.streamlit.app/
+    steps:
+      - name: Clonar o repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar Playwright
+        run: |
+          pip install playwright
+          playwright install chromium --with-deps
+
+      - name: Acordar o app e clicar em "Iniciar Varredura"
+        run: python scripts/keep_alive.py
+
+      - name: Upload de screenshots (debug)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: keep-alive-screenshots
+          path: "*.png"
+          if-no-files-found: ignore

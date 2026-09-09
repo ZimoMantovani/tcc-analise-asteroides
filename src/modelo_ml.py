@@ -1,74 +1,93 @@
 import pandas as pd
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.model_selection import StratifiedKFold, cross_val_predict
+from sklearn.metrics import classification_report, confusion_matrix
 import joblib
+import json
 import os
 
 MODEL_PATH = 'models/modelo_asteroides.joblib'
+METRICS_PATH = 'models/metricas_modelo.json'
 DATA_PATH = 'data/neo_v2.csv'
 
 def treinar_modelo():
     """
-    Treina um modelo de Machine Learning (Random Forest) usando o dataset histórico.
-    Objetivo: Prever a probabilidade de um asteroide ser classificado como perigoso (hazardous).
+    Treina o modelo com Validação Cruzada Estratificada e salva as métricas
+    para serem consumidas pelo front-end (Model Card).
     """
-    print("Iniciando treinamento do modelo de Machine Learning...")
+    print("Iniciando treinamento avançado do modelo ML...")
     
     if not os.path.exists(DATA_PATH):
         print(f"Erro: Dataset {DATA_PATH} não encontrado.")
         return False
 
     df = pd.read_csv(DATA_PATH)
-    
-    # POR QUE ESTAS 4 FEATURES?
-    # São as mesmas métricas primárias utilizadas pela NASA para classificar o risco de um NEO:
-    # 1. Tamanho estimado (est_diameter_max)
-    # 2. Velocidade relativa (relative_velocity)
-    # 3. Distância da Terra (miss_distance)
-    # 4. Brilho intrínseco/Refletividade (absolute_magnitude)
     features = ['est_diameter_max', 'relative_velocity', 'miss_distance', 'absolute_magnitude']
     target = 'hazardous'
     
     df = df.dropna(subset=features + [target])
     X = df[features]
-    y = df[target]
+    y = df[target].astype(bool) # Garantir que o target seja booleano
 
-    # POR QUE 80/20?
-    # Dividimos os dados para evitar o "vazamento de dados" (data leakage). 
-    # O modelo treina com 80% e faz a prova final com 20% de dados que ele nunca viu,
-    # garantindo que ele realmente aprendeu padrões, em vez de apenas decorar as respostas (overfitting).
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # 1. Tratamento do Desbalanceamento
+    # A classe 'True' (perigoso) recebe um peso ~9x maior automaticamente
+    rf_config = {
+        'n_estimators': 100,
+        'max_depth': 10,
+        'class_weight': 'balanced', 
+        'random_state': 42,
+        'n_jobs': -1
+    }
 
-    # POR QUE RANDOM FOREST?
-    # O Random Forest funciona como um "comitê de especialistas". Ele cria 100 árvores de decisão 
-    # (n_estimators=100) onde cada uma vota se o asteroide é perigoso ou não. A maioria vence.
-    # É excelente para dados tabulares, lidando bem com não-linearidades sem precisar de muito ajuste fino.
-    modelo = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=42, n_jobs=-1)
-    modelo.fit(X_train, y_train)
+    # 2. Validação Cruzada Estratificada (Rigor Acadêmico)
+    # Garante que a proporção de 9.7% seja mantida em todas as divisões de teste
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    modelo_cv = RandomForestClassifier(**rf_config)
+    
+    print("Executando Validação Cruzada (5-folds)...")
+    previsoes_cv = cross_val_predict(modelo_cv, X, y, cv=skf)
+    
+    # 3. Extração das Métricas Reais
+    report = classification_report(y, previsoes_cv, output_dict=True)
+    cm = confusion_matrix(y, previsoes_cv)
 
-    previsoes = modelo.predict(X_test)
-    acuracia = accuracy_score(y_test, previsoes)
-    print(f"Modelo treinado com sucesso! Acurácia: {acuracia:.2%}")
+    # 4. Treinamento do Modelo Final (para produção)
+    modelo_final = RandomForestClassifier(**rf_config)
+    modelo_final.fit(X, y)
+    
+    # Capturando a importância de cada variável nas decisões da rede
+    importancias = {
+        features[i]: float(modelo_final.feature_importances_[i]) 
+        for i in range(len(features))
+    }
 
-    # POR QUE JOBLIB?
-    # Salvar (serializar) o modelo em disco evita que o servidor precise retreinar a IA 
-    # toda vez que o Streamlit reiniciar. O modelo fica "congelado" e pronto para inferência rápida.
-    joblib.dump(modelo, MODEL_PATH)
-    print(f"Modelo salvo em {MODEL_PATH}")
+    # 5. Empacotamento de Dados para o Streamlit (Model Card)
+    metricas = {
+        "precisao_perigosos": report['True']['precision'],
+        "recall_perigosos": report['True']['recall'],
+        "f1_perigosos": report['True']['f1-score'],
+        "acuracia_geral": report['accuracy'],
+        "matriz_confusao": cm.tolist(),
+        "importancia_features": importancias
+    }
+    
+    os.makedirs('models', exist_ok=True)
+    with open(METRICS_PATH, 'w') as f:
+        json.dump(metricas, f)
+        
+    joblib.dump(modelo_final, MODEL_PATH)
+    print("✅ Treinamento concluído. Modelo e métricas salvos com sucesso!")
     
     return True
 
 def prever_risco_ia(diametro_max, velocidade, distancia, magnitude_absoluta=20.0):
-    """
-    Carrega o modelo Random Forest em disco e faz a inferência (predict_proba) para um novo objeto.
-    """
+    """ Faz a inferência usando o modelo Random Forest em disco. """
     if not os.path.exists(MODEL_PATH):
         treinar_modelo()
         
     try:
         modelo = joblib.load(MODEL_PATH)
-        
         dados_novos = pd.DataFrame([{
             'est_diameter_max': diametro_max,
             'relative_velocity': velocidade,
@@ -76,7 +95,6 @@ def prever_risco_ia(diametro_max, velocidade, distancia, magnitude_absoluta=20.0
             'absolute_magnitude': magnitude_absoluta 
         }])
         
-        # O predict_proba retorna a probabilidade para [Classe 0 (Seguro), Classe 1 (Perigoso)]
         probabilidade = modelo.predict_proba(dados_novos)[0][1] 
         return probabilidade
         
