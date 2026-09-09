@@ -29,7 +29,7 @@ jobs:
           playwright install chromium --with-deps
 
       - name: Acordar o app e clicar em "Iniciar Varredura"
-        run: python scripts/keep_alive.py
+        run: python src/keep_alive.py
 
       - name: Upload de screenshots (debug)
         if: always()

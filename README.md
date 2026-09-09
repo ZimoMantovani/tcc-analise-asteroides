@@ -2,11 +2,12 @@
 
 <div align="center">
   <p><b>Monitorando o céu, protegendo a Terra</b></p>
-  
+
   ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg?style=for-the-badge&logo=python)
   ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg?style=for-the-badge&logo=postgresql)
-  ![Streamlit](https://img.shields.io/badge/Streamlit-1.31-red.svg?style=for-the-badge&logo=streamlit)
+  ![Streamlit](https://img.shields.io/badge/Streamlit-1.63-red.svg?style=for-the-badge&logo=streamlit)
   ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine_Learning-orange.svg?style=for-the-badge&logo=scikit-learn)
+  ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?style=for-the-badge&logo=docker)
   ![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 </div>
 
@@ -14,7 +15,17 @@
 
 Sistema automatizado de monitoramento e análise de asteroides próximos à Terra (NEOs - *Near Earth Objects*) utilizando dados da NASA NeoWs API, processamento ETL em Python, Machine Learning e visualização interativa com Streamlit.
 
-**Desenvolvido como TCC de Engenharia de Computação - IFSP PRC**
+**Desenvolvido como TCC de Engenharia de Computação - IFSP Câmpus Piracicaba**
+
+---
+
+## 🌐 Acesse Online
+
+O sistema está no ar, com coleta de dados automatizada diariamente:
+
+### 👉 **[neo-analyser.streamlit.app](https://neo-analyser.streamlit.app/)**
+
+Hospedado no Streamlit Community Cloud, com banco de dados PostgreSQL gerenciado pelo Supabase.
 
 ---
 
@@ -23,10 +34,9 @@ Sistema automatizado de monitoramento e análise de asteroides próximos à Terr
 - [Sobre o Projeto](#-sobre-o-projeto)
 - [Funcionalidades](#-funcionalidades)
 - [Tecnologias](#️-tecnologias)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
-- [Configuração](#️-configuração)
-- [Como Executar](#-como-executar)
+- [Automação](#-automação)
+- [Como Rodar Localmente](#-como-rodar-localmente)
+- [Testes Automatizados](#-testes-automatizados)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Contribuição](#-contribuindo)
 - [Licença](#-licença)
@@ -49,22 +59,26 @@ Tornar o monitoramento de asteroides e o entendimento dos riscos associados aces
 
 ## ✨ Funcionalidades
 
-### 🔄 Pipeline ETL Automatizado (`etl_completo.py`)
-- Coleta diária automatizada da NASA NeoWs API.
+### 🔄 Pipeline ETL Automatizado (`src/etl_completo.py`)
+- Coleta diária automatizada da NASA NeoWs API, rodando de verdade via GitHub Actions (ver [Automação](#-automação)) — não depende de ninguém executar nada manualmente.
 - Tratamento, limpeza de dados e padronização usando `pandas`.
-- Armazenamento em banco de dados relacional (PostgreSQL).
+- Armazenamento em PostgreSQL com **UPSERT real**: cada asteroide é atualizado quando reaparece numa nova varredura, preservando a data da primeira detecção e acumulando histórico de verdade.
 
 ### 📊 Dashboard Interativo (Streamlit)
 O sistema foi modularizado em múltiplas páginas para melhor experiência de usuário:
-- **🏠 Home:** Resumo rápido, próximas aproximações e status geral do céu.
+- **🏠 Home** (`app.py`): Resumo rápido, próximas aproximações e status geral do céu.
 - **📈 Estatísticas:** Visão analítica, com distribuições de tamanhos, distâncias e velocidades.
 - **🔭 Explorador:** Busca detalhada de asteroides com filtros dinâmicos.
-- **⚠️ Análise de Riscos:** Módulo focado na simulação de impacto, energia (Megatons) e raio de destruição.
-- **ℹ️ Sobre:** Informações sobre o projeto e metodologia TCC.
+- **⚠️ Análise de Riscos:** Simulação de impacto, energia (Megatons), raio de destruição e predição de IA.
+- **ℹ️ Sobre:** Informações do projeto, arquitetura e **Model Card** do modelo de Machine Learning (métricas, matriz de confusão, importância das features).
 
-### 🤖 Machine Learning (`modelo_ia.py`)
-- Modelo baseado em **Random Forest Classifier**.
-- Treinado com dados históricos para determinar a periculosidade (`hazardous`) de novos asteroides detectados com base em suas características físicas e orbitais.
+### 🤖 Machine Learning (`src/modelo_ml.py`)
+- Classificador **Random Forest**, treinado com dados históricos (~90 mil asteroides) para prever a periculosidade (`hazardous`) de novos objetos com base em diâmetro, velocidade, distância e magnitude absoluta.
+- **Validação cruzada estratificada (5-folds)** e `class_weight='balanced'`, já que apenas ~9,7% dos asteroides do dataset são classificados como perigosos — tratar esse desbalanceamento evita que a acurácia sozinha dê uma falsa sensação de qualidade do modelo.
+- Métricas (precision, recall, F1, matriz de confusão, importância das features) são salvas em `models/metricas_modelo.json` e exibidas na aba Sobre.
+
+### 📝 Geração de Insights (`src/gerador_insights.py`)
+Textos interpretativos gerados por **NLG baseada em regras** (Natural Language Generation por templates, com variação determinística por asteroide) — deliberadamente sem depender de nenhuma LLM externa paga.
 
 ---
 
@@ -76,102 +90,115 @@ O sistema foi modularizado em múltiplas páginas para melhor experiência de us
 - **Scikit-Learn e Joblib** (Machine Learning e serialização de modelos)
 
 ### Backend e Dados
-- **PostgreSQL 16** (Banco de dados)
+- **PostgreSQL 16**, hospedado no **Supabase** em produção (ou local via Docker)
 - **SQLAlchemy** (ORM)
-- **Requests** (Consumo da API REST)
+- **Requests** (Consumo da API REST da NASA)
 
 ### Frontend (Dashboard)
-- **Streamlit** (Framework de UI)
+- **Streamlit** (Framework de UI) — hospedado no **Streamlit Community Cloud**
 - **Plotly** (Gráficos interativos)
+
+### Infraestrutura
+- **Docker + Docker Compose** — ambiente local completo (app + Postgres) com um único comando
+- **GitHub Actions** — automação da coleta diária e do "keep-alive" da aplicação (ver abaixo)
+- **Pytest** — testes automatizados da lógica de cálculo de risco
 
 ---
 
-## 📦 Pré-requisitos
+## 🤖 Automação
 
-Para executar este projeto localmente, você precisa ter:
+Dois workflows do GitHub Actions rodam continuamente, sem depender de ninguém acessar o sistema manualmente:
 
+| Workflow | Frequência | O que faz |
+|---|---|---|
+| `.github/workflows/etl-diario.yml` | 1x por dia | Executa `python -m src.etl_completo` direto contra o banco na nuvem (Supabase), coletando os asteroides mais recentes da NASA. |
+| `.github/workflows/keep-alive.yml` | A cada 6h | Abre o app publicado com um navegador real (Playwright), acorda-o caso esteja hibernando (comportamento padrão do Streamlit Community Cloud após 12h sem tráfego) e aciona uma varredura adicional pela própria interface. |
+
+---
+
+## 💻 Como Rodar Localmente
+
+Existem dois jeitos — escolha o que preferir.
+
+### Opção A — Docker (recomendado, não precisa instalar PostgreSQL)
+
+**Pré-requisitos:** [Docker](https://www.docker.com/) e Docker Compose.
+
+1. Clone o repositório e entre na pasta:
+   ```bash
+   git clone https://github.com/ZimoMantovani/tcc-analise-asteroides.git
+   cd tcc-analise-asteroides
+   ```
+2. Crie um arquivo `.env` na raiz com sua chave da NASA (o restante das variáveis já tem valores padrão para uso local):
+   ```env
+   NASA_API_KEY=SuaChaveAqui
+   ```
+3. Suba tudo (app + banco PostgreSQL) com um único comando:
+   ```bash
+   docker compose up --build
+   ```
+4. Acesse `http://localhost:8501` no navegador. Na primeira execução, clique em **"INICIAR VARREDURA (ATUALIZAR)"** na barra lateral para popular o banco com os dados mais recentes da NASA.
+
+### Opção B — Manual (Python + PostgreSQL local)
+
+**Pré-requisitos:**
 - **Python 3.10+**: [Download](https://www.python.org/downloads/)
 - **PostgreSQL 16+**: [Download](https://www.postgresql.org/download/)
 - **Chave de API da NASA** (gratuita): [Obter em api.nasa.gov](https://api.nasa.gov/)
 
----
-
-## 🚀 Instalação
-
-1. **Clone o repositório:**
+1. Clone o repositório, crie e ative um ambiente virtual, e instale as dependências:
    ```bash
-   git clone https://github.com/seu-usuario/tcc-analise-asteroides.git
+   git clone https://github.com/ZimoMantovani/tcc-analise-asteroides.git
    cd tcc-analise-asteroides
+   python -m venv venv
+   source venv/bin/activate  # Windows: venv\Scripts\activate
+   pip install -r requirements.txt
    ```
-
-2. **Crie e ative um ambiente virtual:**
-   ```bash
-   # Windows
-   python -m venv venvNEO
-   venvNEO\Scripts\activate
-   
-   # Linux/Mac
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Instale as dependências:**
-   ```bash
-    pip install -r requirements.txt
-   ```
-
----
-
-## ⚙️ Configuração
-
-1. **Configuração do Banco de Dados (PostgreSQL):**
+2. Crie o banco no PostgreSQL:
    ```sql
-   -- Conecte-se ao PostgreSQL e crie o banco
    CREATE DATABASE tcc_asteroides;
    ```
-
-2. **Variáveis de Ambiente:**
-   Crie um arquivo `.env` na raiz do projeto contendo suas credenciais:
+3. Crie um `.env` na raiz do projeto:
    ```env
-   # API da NASA
    NASA_API_KEY=SuaChaveAqui
-   
-   # Banco de Dados
+
    DB_USER=postgres
    DB_PASSWORD=sua_senha
    DB_HOST=localhost
    DB_PORT=5432
    DB_NAME=tcc_asteroides
    ```
-   *Certifique-se de que o `.env` esteja no `.gitignore`.*
+   *(Em produção na nuvem, `DATABASE_URL` sozinha substitui essas 5 variáveis — veja `src/database.py`.)*
+4. Rode o pipeline de coleta pela primeira vez para popular o banco:
+   ```bash
+   python -m src.etl_completo
+   ```
+5. **(Opcional)** Retreine o modelo de IA com os dados do CSV local (o modelo pré-treinado já vem no repositório em `models/`):
+   ```bash
+   python -m src.modelo_ml
+   ```
+6. Inicie o dashboard:
+   ```bash
+   streamlit run app.py
+   ```
+   O sistema abre automaticamente em `http://localhost:8501`.
+
+> ⚠️ Sempre rode os scripts com `python -m src.<módulo>` (não `python src/<módulo>.py` direto) — os módulos importam uns aos outros como pacote (`src.database`, `src.etl_completo`...), e rodar o arquivo isolado quebra esse import.
 
 ---
 
-## 🎮 Como Executar
+## 🧪 Testes Automatizados
 
-### 1. Alimentação do Banco de Dados (ETL)
-Antes de rodar o painel pela primeira vez, execute o pipeline de coleta para popular o banco de dados:
-```bash
-python etl_completo.py
-```
+A lógica pura de cálculo de risco (`src/analise_riscos.py`) tem cobertura de testes com `pytest` — é a única parte do sistema que não depende de banco de dados ou da API da NASA para ser testada isoladamente.
 
-### 2. Treinamento da Inteligência Artificial (Opcional)
-O modelo pré-treinado (`modelo_asteroides.joblib`) já deve estar na pasta. Caso deseje retreinar com novos dados do arquivo CSV local:
 ```bash
-python modelo_ia.py
-```
-
-### 3. Iniciar o Dashboard (Streamlit)
-Execute a aplicação principal. O sistema abrirá automaticamente no navegador em `http://localhost:8501`.
-```bash
-streamlit run app.py
+pip install pytest  # já incluso em requirements.txt
+pytest
 ```
 
 ---
 
 ## 📁 Estrutura do Projeto
-
-A estrutura foi reorganizada para suportar o formato *Multipage* do Streamlit e a integração com IA:
 
 ```text
 tcc-analise-asteroides/
@@ -181,26 +208,44 @@ tcc-analise-asteroides/
 │   ├── 2_Estatisticas.py
 │   ├── 3_Explorador.py
 │   ├── 4_Analise_Riscos.py
-│   └── 5_Sobre.py
+│   └── 5_Sobre.py                   # Inclui o Model Card do ML
 │
-├── 📄 database.py                   # Conexão central com o PostgreSQL (engine SQLAlchemy)
-├── 📄 etl_completo.py               # Script de extração, transformação e carga (NASA API -> BD)
-├── 📄 modelo_ia.py                  # Script para treino e inferência do modelo Random Forest
-├── 📄 modelo_asteroides.joblib      # Modelo de IA serializado
-├── 📄 analise_riscos.py             # Lógica de cálculo de risco e energia de impacto
-├── 📄 utils.py                      # Funções auxiliares gerais (cache, sidebar, botão de ETL)
-├── 📄 estilo.py                     # Tema visual (CSS espacial/HUD) e capa com imagem APOD da NASA
-├── 📄 curiosidades_ia.py            # Geração de textos educacionais baseados em regras
+├── 📂 src/                          # Todo o "backend": ETL, banco, ML, regras de negócio
+│   ├── database.py                  # Conexão central (Supabase na nuvem / Postgres local)
+│   ├── etl_completo.py              # Extração, transformação e carga (NASA API -> BD)
+│   ├── modelo_ml.py                 # Treino (com validação cruzada) e inferência do Random Forest
+│   ├── analise_riscos.py            # Cálculo de risco, energia de impacto e raio de destruição
+│   ├── gerador_insights.py          # Geração de texto interpretativo (NLG baseada em regras)
+│   ├── utils.py                     # Funções auxiliares (cache, sidebar, botão de atualização)
+│   ├── estilo.py                    # Tema visual (CSS espacial/HUD) e capa com imagem APOD da NASA
+│   └── keep_alive.py                # Script Playwright usado pelo workflow de keep-alive
 │
-├── 📂 images/                       # Logo e demais imagens estáticas
-├── 📂 .streamlit/                   # Configuração de tema do Streamlit (config.toml)
-├── 📄 neo_v2.csv                    # Dataset de treinamento (histórico NASA, ~90k objetos)
-├── 📄 .env                          # Configurações locais (Ignorado pelo Git)
-├── 📄 LICENSE                       # Licença MIT
-└── 📄 README.md                     # Documentação principal
+├── 📂 tests/                        # Testes automatizados (pytest)
+│   └── test_analise_riscos.py
+│
+├── 📂 data/
+│   └── neo_v2.csv                   # Dataset de treinamento (histórico NASA, ~90k objetos)
+├── 📂 models/
+│   ├── modelo_asteroides.joblib     # Modelo de IA serializado
+│   └── metricas_modelo.json         # Métricas do modelo (consumidas pelo Model Card)
+├── 📂 assets/
+│   └── logo.png
+│
+├── 📂 .github/workflows/            # Automação (ETL diário + keep-alive)
+├── 📂 .streamlit/                   # Configuração de tema do Streamlit
+├── 📂 .devcontainer/                # Configuração para GitHub Codespaces
+│
+├── 🐳 Dockerfile
+├── 🐳 docker-compose.yml
+├── 📄 .dockerignore
+├── 📄 pytest.ini
+├── 📄 requirements.txt
+├── 📄 .env                          # Configurações locais (ignorado pelo Git)
+├── 📄 LICENSE
+└── 📄 README.md
 ```
 
-> **Nota:** `app.py` é a própria Home — não existe uma página separada `1_Home.py` dentro de `pages/`.
+---
 
 ## 🤝 Contribuindo
 

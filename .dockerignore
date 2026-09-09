@@ -5,3 +5,7 @@ __pycache__/
 .env
 .git/
 .gitignore
+tests/
+.github/
+.devcontainer/
+*.md
