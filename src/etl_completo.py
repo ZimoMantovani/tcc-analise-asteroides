@@ -75,7 +75,7 @@ def transformar_dados(data):
                     'perigoso': neo['is_potentially_hazardous_asteroid'],
                     'sentry_object': neo.get('is_sentry_object', False),
 
-                    'data_aproximacao': datetime.strptime(aproximacao['close_approach_date'], '%Y-%m-%d'),
+                    'data_aproximacao': datetime.strptime(aproximacao['close_approach_date'], '%Y-%m-%d').date(),
                     'data_hora_aproximacao': aproximacao['close_approach_date_full'],
 
                     'distancia_km': float(aproximacao['miss_distance']['kilometers']),
@@ -209,9 +209,6 @@ def exibir_resumo(df):
 
 
 # ========== PIPELINE PRINCIPAL ==========
-# Tudo que precisa acontecer só quando o script roda sozinho
-# (python etl_completo.py) fica aqui dentro — nunca no nível do módulo.
-
 if __name__ == "__main__":
     print("🚀 INICIANDO PIPELINE ETL - Near Earth Objects")
     print("="*70)
