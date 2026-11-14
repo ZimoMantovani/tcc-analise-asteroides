@@ -81,6 +81,7 @@ class GeradorInsights:
         """
         Gera o parágrafo explicativo focando apenas nos dados físicos e contexto.
         A predição de ML foi separada para a interface.
+        Revisar ML
         """
         texto_tamanho = GeradorInsights.comparar_tamanho(diametro_km, id_neo)
         
