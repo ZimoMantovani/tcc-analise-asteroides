@@ -181,10 +181,10 @@ class AnalisadorRiscos:
         Returns:
             dict: Análise completa de risco
         """
-        diametro = row['diametro_max_km']
-        velocidade = row['velocidade_kmh']
-        distancia = row['distancia_lunar']
-        perigoso_nasa = row['perigoso']
+        diametro = float(row['diametro_max_km']) if pd.notna(row.get('diametro_max_km')) else 0.0
+        velocidade = float(row['velocidade_kmh']) if pd.notna(row.get('velocidade_kmh')) else 0.0
+        distancia = float(row['distancia_lunar']) if pd.notna(row.get('distancia_lunar')) else 999.0
+        perigoso_nasa = bool(row.get('perigoso', False))
         
         # Cálculos
         massa_kg = AnalisadorRiscos.calcular_massa(diametro)
@@ -195,9 +195,9 @@ class AnalisadorRiscos:
         
         # Índice de Risco Próprio (0-100)
         # Ponderação: 40% tamanho, 30% distância, 20% velocidade, 10% NASA
-        score_tamanho = min((diametro / 1.0) * 40, 40)  # Normalizado até 1km
-        score_distancia = max(30 - (distancia / 10) * 30, 0)  # Quanto mais perto, maior o risco
-        score_velocidade = min((velocidade / 100000) * 20, 20)  # Normalizado até 100k km/h
+        score_tamanho = min((diametro / 1.0) * 40, 40) if diametro > 0 else 0.0  # Normalizado até 1km
+        score_distancia = max(30 - (distancia / 10) * 30, 0.0) if distancia >= 0 else 0.0  # Quanto mais perto, maior o risco
+        score_velocidade = min((velocidade / 100000) * 20, 20.0) if velocidade > 0 else 0.0  # Normalizado até 100k km/h
         score_nasa = 10 if perigoso_nasa else 0
         
         indice_risco = score_tamanho + score_distancia + score_velocidade + score_nasa
@@ -243,9 +243,15 @@ class AnalisadorRiscos:
         Returns:
             pd.DataFrame: DataFrame com análise de riscos
         """
+        if df.empty:
+            return pd.DataFrame(columns=[
+                'nome', 'massa_kg', 'energia_megatons', 'raio_destruicao_km',
+                'comparacao_energia', 'classificacao', 'indice_risco',
+                'nivel_indice', 'cor_indice', 'perigoso_nasa'
+            ])
+
         analises = []
-        
-        for _, row in df.iterrows(): # Apesar do iterrows ser considerado lento, não vi necessidade de colocar outro metodo, por conta da quantidade de dados.
+        for _, row in df.iterrows():
             analise = AnalisadorRiscos.analisar_asteroide(row)
             analises.append(analise)
         

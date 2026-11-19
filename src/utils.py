@@ -29,7 +29,8 @@ def carregar_asteroides():
         raise Exception("Conexão com banco falhou ou variáveis de ambiente ausentes")
 
     query = text("SELECT * FROM asteroides ORDER BY data_aproximacao")
-    df = pd.read_sql(query, engine.connect())
+    with engine.connect() as conn:
+        df = pd.read_sql(query, conn)
 
     if df.empty:
         raise Exception("Nenhum dado encontrado no banco")
@@ -152,7 +153,8 @@ def render_sidebar():
                     st.write("❌ PostgreSQL: Falha na conexão")
 
                 try:
-                    result = pd.read_sql("SELECT COUNT(*) FROM asteroides", engine)
+                    with engine.connect() as conn:
+                        result = pd.read_sql(text("SELECT COUNT(*) FROM asteroides"), conn)
                     st.write(f"✅ Tabela 'asteroides': {result.iloc[0, 0]} registros")
                 except Exception:
                     st.write("❌ Tabela 'asteroides': Não existe ou está vazia")

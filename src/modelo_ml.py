@@ -11,6 +11,8 @@ MODEL_PATH = 'models/modelo_asteroides.joblib'
 METRICS_PATH = 'models/metricas_modelo.json'
 DATA_PATH = 'data/neo_v2.csv'
 
+_modelo_cache = None
+
 def treinar_modelo():
     """
     Treina o modelo com Validação Cruzada Estratificada e salva as métricas
@@ -72,22 +74,37 @@ def treinar_modelo():
         "importancia_features": importancias
     }
     
+    global _modelo_cache
     os.makedirs('models', exist_ok=True)
     with open(METRICS_PATH, 'w') as f:
         json.dump(metricas, f)
         
     joblib.dump(modelo_final, MODEL_PATH)
+    _modelo_cache = modelo_final
     print("✅ Treinamento concluído. Modelo e métricas salvos com sucesso!")
     
     return True
 
-def prever_risco_ia(diametro_max, velocidade, distancia, magnitude_absoluta=20.0):
-    """ Faz a inferência usando o modelo Random Forest em disco. """
+def carregar_modelo():
+    """Carrega o modelo do disco ou retorna a instância cacheada em memória."""
+    global _modelo_cache
+    if _modelo_cache is not None:
+        return _modelo_cache
+
     if not os.path.exists(MODEL_PATH):
         treinar_modelo()
-        
+
+    if os.path.exists(MODEL_PATH):
+        _modelo_cache = joblib.load(MODEL_PATH)
+    return _modelo_cache
+
+def prever_risco_ia(diametro_max, velocidade, distancia, magnitude_absoluta=20.0):
+    """ Faz a inferência usando o modelo Random Forest em cache. """
     try:
-        modelo = joblib.load(MODEL_PATH)
+        modelo = carregar_modelo()
+        if modelo is None:
+            return 0.0
+
         dados_novos = pd.DataFrame([{
             'est_diameter_max': diametro_max,
             'relative_velocity': velocidade,

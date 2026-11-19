@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import os
+import pandas as pd
 from src.utils import carregar_asteroides, render_sidebar
 
 from streamlit_extras.metric_cards import style_metric_cards
@@ -133,5 +134,21 @@ st.divider()
 
 # Próximas aproximações
 st.subheader("Próximas Aproximações // Janela de 7 Dias", divider="blue")
-proximos = df.head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
-st.dataframe(proximos, width='stretch', hide_index=True)
+
+hoje = pd.Timestamp.now().date()
+df_futuros = df[pd.to_datetime(df['data_aproximacao']).dt.date >= hoje].sort_values(by='data_aproximacao', ascending=True)
+
+config_colunas = {
+    "data_aproximacao": st.column_config.DateColumn(
+        "Data de Aproximação",
+        format="DD/MM/YYYY"
+    )
+}
+
+if not df_futuros.empty:
+    proximos = df_futuros.head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
+    st.dataframe(proximos, width='stretch', hide_index=True, column_config=config_colunas)
+else:
+    st.info("ℹ️ Não foram encontradas aproximações futuras a partir de hoje no banco local. Exibindo os últimos registros armazenados. Clique em **'INICIAR VARREDURA (ATUALIZAR)'** na barra lateral para sincronizar a telemetria recente com a NASA.")
+    ultimos = df.sort_values(by='data_aproximacao', ascending=False).head(10)[['nome', 'data_aproximacao', 'distancia_lunar', 'perigoso']]
+    st.dataframe(ultimos, width='stretch', hide_index=True, column_config=config_colunas)

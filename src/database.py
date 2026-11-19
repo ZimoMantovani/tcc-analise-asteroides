@@ -8,6 +8,14 @@ from sqlalchemy import create_engine
 
 load_dotenv()
 
+# Tenta carregar DATABASE_URL do st.secrets caso esteja rodando no Streamlit Cloud
+try:
+    import streamlit as st
+    if "DATABASE_URL" in st.secrets and not os.getenv('DATABASE_URL'):
+        os.environ['DATABASE_URL'] = st.secrets["DATABASE_URL"]
+except Exception:
+    pass
+
 _engine = None
 
 def _montar_connection_string() -> str:
@@ -15,6 +23,10 @@ def _montar_connection_string() -> str:
     database_url = os.getenv('DATABASE_URL')
     if database_url:
         print("☁️ [Rede] Rota NUVEM (Supabase) detectada...")
+        
+        # Garante prefixo postgresql:// para compatibilidade com SQLAlchemy 2.0
+        if database_url.startswith("postgres://"):
+            database_url = database_url.replace("postgres://", "postgresql://", 1)
         
         # Garante sslmode=require na URL de forma segura
         parsed = urlparse(database_url)
@@ -51,6 +63,8 @@ def get_engine():
         try:
             _engine = create_engine(
                 connection_string,
+                pool_pre_ping=True,
+                pool_recycle=1800,
                 connect_args={'client_encoding': 'utf8', 'options': '-c lc_messages=C'}
             )
             # Força um teste de conexão rápido
