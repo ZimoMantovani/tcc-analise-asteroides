@@ -18,7 +18,8 @@ render_sidebar()
 # Capa padronizada
 renderizar_hero(
     "Especificações do Sistema",
-    "Arquitetura, tecnologias e informações sobre o projeto NEO Monitor"
+    "Arquitetura, tecnologias e informações sobre o projeto NEO Monitor",
+    compacto=True
 )
 
 st.divider()
@@ -130,7 +131,7 @@ if os.path.exists(caminho_metricas):
             xaxis=dict(gridcolor='rgba(0,240,255,0.08)'),
             yaxis_title=None
         )
-        st.plotly_chart(fig_feat, use_container_width=True)
+        st.plotly_chart(fig_feat, width='stretch')
     
     with col_matrix:
         st.markdown("**Matriz de Confusão (Dados de Teste)**")

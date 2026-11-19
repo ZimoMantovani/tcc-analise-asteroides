@@ -24,15 +24,18 @@ except Exception as e:
 # Capa da página
 renderizar_hero(
     "Explorador de Asteroides",
-    "Filtre, pesquise e analise o dossiê detalhado dos objetos"
+    "Filtre, pesquise e analise o dossiê detalhado dos objetos",
+    compacto=True
 )
 
 st.divider()
 
 # Painel de Filtros estilo HUD
 st.subheader("Filtros de Varredura", divider="blue")
-col1, col2, col3 = st.columns(3)
+col_busca, col1, col2, col3 = st.columns([1.5, 1, 1, 1])
 
+with col_busca:
+    termo_busca = st.text_input("🔍 Buscar por Nome ou ID:", placeholder="Ex: 2024, Apophis, 3542519...")
 with col1:
     filtro_perigoso = st.selectbox("Classificação de Risco:", ["Todos", "Perigosos", "Seguros"])
 with col2:
@@ -42,6 +45,14 @@ with col3:
 
 # Aplicar filtros
 df_filtrado = df.copy()
+
+if termo_busca:
+    termo = termo_busca.strip().lower()
+    df_filtrado = df_filtrado[
+        df_filtrado['nome'].astype(str).str.lower().str.contains(termo) |
+        df_filtrado['id_neo'].astype(str).str.lower().str.contains(termo)
+    ]
+
 if filtro_perigoso == "Perigosos":
     df_filtrado = df_filtrado[df_filtrado['perigoso'] == True]
 elif filtro_perigoso == "Seguros":
@@ -61,36 +72,36 @@ if len(df_filtrado) > 0:
     # Pega os 12 maiores do dataframe filtrado para exibir como cards
     df_cards = df_filtrado.nlargest(12, 'diametro_max_km')
     
+    # Injeta o bloco de estilo consolidado de todos os cards de uma vez
+    estilos_cards = []
+    for idx, (_, row) in enumerate(df_cards.iterrows()):
+        cor_borda = "rgba(255, 42, 95, 0.4)" if row['perigoso'] else "rgba(0, 240, 255, 0.3)"
+        cor_sombra = "rgba(255, 42, 95, 0.1)" if row['perigoso'] else "rgba(0, 240, 255, 0.05)"
+        estilos_cards.append(f"""
+            .st-key-card_{idx} {{
+                border: 1px solid {cor_borda};
+                border-radius: 0.75rem;
+                padding: 1.2rem;
+                background-color: rgba(20, 27, 46, 0.55);
+                backdrop-filter: blur(6px);
+                box-shadow: 0 0 15px {cor_sombra};
+                margin-bottom: 1.5rem;
+            }}
+        """)
+    st.markdown(f"<style>{''.join(estilos_cards)}</style>", unsafe_allow_html=True)
+    
     # Cria um grid de 3 colunas
     cols = st.columns(3)
     
     for idx, (index, row) in enumerate(df_cards.iterrows()):
         col_atual = cols[idx % 3]
-        
-        cor_borda = "rgba(255, 42, 95, 0.4)" if row['perigoso'] else "rgba(0, 240, 255, 0.3)"
-        cor_sombra = "rgba(255, 42, 95, 0.1)" if row['perigoso'] else "rgba(0, 240, 255, 0.05)"
         tag_texto = "PERIGOSO" if row['perigoso'] else "SEGURO"
         tag_cor = "#FF2A5F" if row['perigoso'] else "#00F0FF"
-        icone = "⚠️" if row['perigoso'] else "☄️"
+        simbolo_status = "⚠️" if row['perigoso'] else "☄️"
         
         with col_atual:
-            # Injeta o CSS que vai estilizar o container nativo pela sua 'key'
-            st.markdown(f"""
-                <style>
-                .st-key-card_{idx} {{
-                    border: 1px solid {cor_borda};
-                    border-radius: 0.75rem;
-                    padding: 1.2rem;
-                    background-color: rgba(20, 27, 46, 0.55);
-                    backdrop-filter: blur(6px);
-                    box-shadow: 0 0 15px {cor_sombra};
-                    margin-bottom: 1.5rem;
-                }}
-                </style>
-            """, unsafe_allow_html=True)
-            
             with st.container(key=f"card_{idx}"):
-                st.markdown(f"#### {icone} {row['nome']}")
+                st.markdown(f"#### {simbolo_status} {row['nome']}")
                 st.markdown(hud_tag(tag_texto, cor=tag_cor), unsafe_allow_html=True)
                 st.write("")
                 st.markdown(f"**Diâmetro:** {row['diametro_max_km']:.3f} km")

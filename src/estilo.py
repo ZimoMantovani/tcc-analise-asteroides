@@ -15,7 +15,7 @@ import requests
 import streamlit as st
 
 
-def _gerar_estrelas(quantidade=200, seed=42):
+def _gerar_estrelas(quantidade=65, seed=42):
     """
     Gera posições aleatórias de 'estrelas' como camadas de radial-gradient CSS.
     Usa gerador local com seed fixa para garantir que o padrão não mude
@@ -27,7 +27,7 @@ def _gerar_estrelas(quantidade=200, seed=42):
         x = rng.uniform(0, 100)
         y = rng.uniform(0, 100)
         tamanho = rng.choice([1, 1, 1, 2])  # maioria pequena, algumas maiores
-        opacidade = rng.uniform(0.3, 1.0)
+        opacidade = rng.uniform(0.3, 0.9)
         camadas.append(
             f"radial-gradient({tamanho}px {tamanho}px at {x:.2f}% {y:.2f}%, "
             f"rgba(255,255,255,{opacidade:.2f}), transparent)"
@@ -38,7 +38,8 @@ def _gerar_estrelas(quantidade=200, seed=42):
 def aplicar_tema_espacial():
     """Injeta CSS: fundo escuro com estrelas, leve 'parallax' ao rolar,
     tipografia monospace estilo terminal, e visual de painel técnico (HUD)."""
-    estrelas_css = _gerar_estrelas()
+    estrelas_fundo = _gerar_estrelas(quantidade=60, seed=42)
+    estrelas_piscando = _gerar_estrelas(quantidade=25, seed=99)
 
     st.markdown(f"""
         <style>
@@ -47,7 +48,7 @@ def aplicar_tema_espacial():
         /* Fundo escuro com estrelas geradas via CSS puro (sem imagens externas) */
         .stApp {{
             background-color: #05070D;
-            background-image: {estrelas_css};
+            background-image: {estrelas_fundo};
             background-attachment: fixed;  /* dá sensação de profundidade ao rolar */
         }}
 
@@ -104,7 +105,7 @@ def aplicar_tema_espacial():
             content: "";
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-image: {estrelas_css};
+            background-image: {estrelas_piscando};
             opacity: 0.5;
             animation: piscar 4s ease-in-out infinite;
             pointer-events: none;
@@ -194,11 +195,16 @@ def _buscar_imagem_apod():
     return None
 
 
-def renderizar_hero(titulo: str, subtitulo: str):
-    """Renderiza uma seção de capa em tela cheia com a imagem real do dia da NASA."""
+def renderizar_hero(titulo: str, subtitulo: str, compacto: bool = False):
+    """Renderiza uma seção de capa com a imagem real do dia da NASA."""
     resultado = _buscar_imagem_apod()
     imagem_url = resultado[0] if resultado else None
     fundo = f"url('{imagem_url}')" if imagem_url else "none"
+
+    padding = "1.8rem 1.5rem" if compacto else "4.5rem 2rem"
+    font_size_h1 = "2.0rem" if compacto else "2.8rem"
+    font_size_p = "0.95rem" if compacto else "1.15rem"
+    margin_bottom = "1.2rem" if compacto else "2rem"
 
     st.markdown(f"""
         <div style="
@@ -206,14 +212,14 @@ def renderizar_hero(titulo: str, subtitulo: str):
             background-size: cover;
             background-position: center;
             border-radius: 1rem;
-            padding: 4.5rem 2rem;
+            padding: {padding};
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: {margin_bottom};
         ">
-            <h1 style="color: white; font-size: 2.8rem; margin-bottom: 0.5rem;">{titulo}</h1>
-            <p style="color: #cfd3dc; font-size: 1.15rem;">{subtitulo}</p>
+            <h1 style="color: white; font-size: {font_size_h1}; margin-bottom: 0.3rem;">{titulo}</h1>
+            <p style="color: #cfd3dc; font-size: {font_size_p}; margin-bottom: 0;">{subtitulo}</p>
         </div>
     """, unsafe_allow_html=True)
 
-    if resultado and resultado[1]:
+    if resultado and resultado[1] and not compacto:
         st.caption(f"📷 Imagem Astronômica do Dia (NASA APOD): {resultado[1]}")

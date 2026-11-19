@@ -30,7 +30,8 @@ except Exception as e:
 # Capa padronizada
 renderizar_hero(
     "Avaliação de Ameaças Estelares",
-    "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning"
+    "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning",
+    compacto=True
 )
 
 # Gerar análise completa

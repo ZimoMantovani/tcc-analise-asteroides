@@ -23,10 +23,11 @@ except Exception as e:
     st.error("Não foi possível carregar os dados. Use a barra lateral para atualizar.")
     st.stop()
 
-# Substitui o st.title pelo Hero (Capa) padronizado
+# Substitui o st.title pelo Hero (Capa) padronizado compacto
 renderizar_hero(
     "Estatísticas Detalhadas",
-    "Análise de Distribuição e Comportamento dos NEOs"
+    "Análise de Distribuição e Comportamento dos NEOs",
+    compacto=True
 )
 
 st.divider()

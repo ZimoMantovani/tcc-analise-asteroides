@@ -80,7 +80,7 @@ def render_sidebar():
 
         # --- BLOCO 3: BOTÃO DE ATUALIZAÇÃO (ETL) ---
         # Botão ganhou o type="primary" para maior destaque na interface e nome focado em ação
-        if st.button("INICIAR VARREDURA (ATUALIZAR)", type="primary", use_container_width=True):
+        if st.button("INICIAR VARREDURA (ATUALIZAR)", type="primary", width='stretch'):
             with st.spinner("Extraindo telemetria da NASA..."):
                 dados_brutos = extrair_dados_nasa(dias=7)
                 if dados_brutos:
