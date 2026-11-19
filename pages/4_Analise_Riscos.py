@@ -30,7 +30,7 @@ except Exception as e:
 # Capa padronizada
 renderizar_hero(
     "Avaliação de Ameaças Estelares",
-    "Análise de Risco, Simulação de Impacto e Previsões com Machine Learning"
+    "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning"
 )
 
 # Gerar análise completa
@@ -66,25 +66,25 @@ mapa_cores_risco = {
 }
 
 # ========== MÉTRICAS GERAIS ==========
-st.subheader("Panorama Tático de Riscos", divider="blue")
+st.subheader("Panorama Tático // Prioridade de Monitoramento", divider="blue")
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     risco_alto = len(df_completo[df_completo['indice_risco'] >= 60])
-    st.metric("🔴 Ameaças de Alto Risco", risco_alto, delta=f"{risco_alto/len(df)*100:.1f}%")
+    st.metric("🔴 Alta Prioridade (Score ≥ 60)", risco_alto, delta=f"{risco_alto/len(df)*100:.1f}%")
 
 with col2:
     energia_max = df_riscos['energia_megatons'].max()
-    st.metric("💥 Maior Energia (MT)", f"{energia_max:,.2f}")
+    st.metric("💥 Maior Energia Cinética (MT)", f"{energia_max:,.2f}")
 
 with col3:
     raio_max = df_riscos['raio_destruicao_km'].max()
-    st.metric("📏 Maior Raio Destrutivo", f"{raio_max:,.1f} km")
+    st.metric("📏 Maior Raio Teórico", f"{raio_max:,.1f} km")
 
 with col4:
     indice_medio = df_riscos['indice_risco'].mean()
-    st.metric("📈 Índice de Risco Médio", f"{indice_medio:.1f}/100")
+    st.metric("📈 Índice Médio de Prioridade", f"{indice_medio:.1f}/100")
 
 # Aplica o estilo de vidro aos cards de métricas
 style_metric_cards(
@@ -180,7 +180,7 @@ if asteroide_selecionado:
         st.write("")
         
         c1, c2, c3, c4 = st.columns(4)
-        c1.markdown(f"**Índice de Risco:**\n### {dados['indice_risco']:.1f}/100")
+        c1.markdown(f"**Prioridade de Monitoramento:**\n### {dados['indice_risco']:.1f}/100")
         c2.markdown(f"**Diâmetro Estimado:**\n### {dados['diametro_max_km']:.3f} km")
         c3.markdown(f"**Velocidade Relativa:**\n### {dados['velocidade_kmh']:,.0f} km/h")
         c4.markdown(f"**Distância de Interceptação:**\n### {dados['distancia_lunar']:.2f} LD")
@@ -228,16 +228,18 @@ if asteroide_selecionado:
             
             chance_pct = probabilidade_perigo * 100
             
-            st.write("**Probabilidade do asteroide ser categorizado como Hazardous (Perigoso):**")
+            st.write("**Probabilidade de Classificação como PHA (Potentially Hazardous Asteroid):**")
             # Barra de progresso visual simulando telemetria
             st.progress(probabilidade_perigo, text=f"{chance_pct:.1f}%")
             
             if chance_pct < 10:
-                st.success("Veredito do Modelo: **RISCO QUASE NULO**. O objeto apresenta características consistentes com a vasta maioria dos asteroides inofensivos.")
+                st.success("Veredito do Modelo: **OBJETO NOMINAL (NÃO-PHA)**. Parâmetros físicos consistentes com a grande maioria dos asteroides inofensivos.")
             elif chance_pct < 50:
-                st.warning("Veredito do Modelo: **ALERTA MODERADO**. O objeto possui anomalias na velocidade ou no tamanho que requerem monitoramento.")
+                st.warning("Veredito do Modelo: **POTENCIAL MODERADO (ZONA DE ATENÇÃO)**. Características físicas limítrofes que justificam monitoramento preventivo.")
             else:
-                st.error("Veredito do Modelo: **ALTO RISCO DE IMPACTO**. Padrões orbitais e físicos coincidem criticamente com ameaças registradas no banco de dados!")
+                st.error("Veredito do Modelo: **ALTA PROBABILIDADE DE PHA**. O objeto apresenta perfil físico (diâmetro/brilho) compatível com os Asteroides Potencialmente Perigosos da NASA.")
+
+            st.caption("ℹ️ *Nota de Defesa Planetária: A flag PHA (Potentially Hazardous Asteroid) indica potencial de aproximação geométrica de longo prazo (H ≤ 22.0 e MOID ≤ 0.05 UA), não uma certeza ou risco iminente de colisão nesta passagem.*")
 
     with col_nlg:
         st.subheader("📝 Resumo Interpretativo (NLG)", divider="gray")
@@ -253,8 +255,8 @@ if asteroide_selecionado:
 
 st.divider()
 
-# ========== GRÁFICO: RISCO vs TAMANHO ==========
-st.subheader("Dispersão Analítica: Risco vs Tamanho", divider="blue")
+# ========== GRÁFICO: PRIORIDADE vs TAMANHO ==========
+st.subheader("Dispersão Analítica: Prioridade vs Tamanho", divider="blue")
 
 fig_scatter = px.scatter(
     df_completo,
@@ -265,9 +267,9 @@ fig_scatter = px.scatter(
     hover_data=['nome', 'distancia_lunar', 'velocidade_kmh'],
     labels={
         'diametro_max_km': 'Diâmetro (km)',
-        'indice_risco': 'Índice de Risco (0-100)',
+        'indice_risco': 'Índice de Prioridade (0-100)',
         'nivel_indice': 'Classificação',
-        'energia_megatons': 'Energia (MT)'
+        'energia_megatons': 'Energia Teórica (MT)'
     },
     color_discrete_map=mapa_cores_risco
 )
@@ -280,11 +282,11 @@ st.plotly_chart(fig_scatter, width='stretch')
 
 st.write("")
 
-# ========== TOP 10 MAIS PERIGOSOS & METODOLOGIA ==========
+# ========== TOP 10 MAIOR PRIORIDADE & METODOLOGIA ==========
 col_tabela, col_metodo = st.columns([2, 1])
 
 with col_tabela:
-    st.subheader("🚨 Top 10 Ameaças Detectadas")
+    st.subheader("🚨 Top 10 Prioridade de Monitoramento")
     top_perigosos = df_completo.nlargest(10, 'indice_risco')[
         ['nome', 'indice_risco', 'nivel_indice', 'diametro_max_km', 'distancia_lunar']
     ].copy()
@@ -297,18 +299,19 @@ with col_tabela:
 
 with col_metodo:
     st.subheader("📖 Metodologia")
-    with st.expander("COMO O RISCO É CALCULADO?", expanded=True):
+    with st.expander("COMO O ÍNDICE É CALCULADO?", expanded=True):
         st.markdown("""
-        **Índice de Risco Proprietário (0-100)**
-        - **40% Tamanho:** Diâmetro do asteroide
-        - **30% Distância:** Proximidade da Terra
-        - **20% Velocidade:** Velocidade de aproximação
-        - **10% Classificação NASA:** Status de perigo
+        **Índice Multicritério de Prioridade (0-100)**
+        - **40% Tamanho:** Diâmetro máximo estimado
+        - **30% Distância:** Proximidade relativa em LD
+        - **20% Velocidade:** Velocidade relativa de aproximação
+        - **10% Classificação NASA:** Status PHA formal
         
-        **Energia de Impacto (MT)**
-        Fórmula: `E = 0.5 × m × v²`
-        Assumindo densidade de 2.600 kg/m³ (rocha).
+        *Nota Acadêmica:* A formal **Escala de Turim** requer probabilidade estocástica de impacto ($P_i$). Para aproximações rotineiras da semana, $P_i \\approx 0$ (resultando em Turim 0 para todos). Este índice ponderado foi formulado para permitir triagem e ranqueamento tático dos objetos de cada varredura.
         
-        **Raio de Destruição (km)**
+        **Energia Cinética de Impacto (MT)**
+        Fórmula: `E = 0.5 × m × v²` (densidade de 2.600 kg/m³).
+        
+        **Raio de Destruição Teórico (km)**
         Fórmula empírica: `R ≈ 2.2 × E^0.33`
         """)

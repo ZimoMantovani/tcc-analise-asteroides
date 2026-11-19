@@ -18,8 +18,9 @@ class AnalisadorRiscos:
     # Escalas de referência (baseadas em eventos históricos)
     EVENTOS_HISTORICOS = {
         'Chelyabinsk 2013': {'diametro': 0.020, 'energia_mt': 0.5, 'dano': 'Onda de choque, vidros quebrados'},
-        'Tunguska 1908': {'diametro': 0.050, 'energia_mt': 15, 'dano': 'Devastação de 2.000 km²'},
         'Barringer (Arizona)': {'diametro': 0.050, 'energia_mt': 10, 'dano': 'Cratera de 1,2 km'},
+        'Tunguska 1908': {'diametro': 0.060, 'energia_mt': 15, 'dano': 'Devastação de 2.000 km² de floresta'},
+        'Ries (Alemanha)': {'diametro': 1.5, 'energia_mt': 2_400_000, 'dano': 'Cratera de 24 km, devastação continental'},
         'Chicxulub (Dinossauros)': {'diametro': 10.0, 'energia_mt': 100_000_000, 'dano': 'Extinção em massa'}
     }
     
@@ -95,7 +96,7 @@ class AnalisadorRiscos:
                 'dano_potencial': 'Destruição de área urbana pequena',
                 'area_afetada': '~10-50 km²',
                 'frequencia': 'A cada 100-1000 anos',
-                'exemplo_historico': 'Chelyabinsk (2013) - 20m'
+                'exemplo_historico': 'Chelyabinsk (2013, ~20m) e Barringer (~50m)'
             }
         elif diametro_km < 1.0:
             return {
@@ -105,7 +106,7 @@ class AnalisadorRiscos:
                 'dano_potencial': 'Devastação de região inteira',
                 'area_afetada': '~1.000-10.000 km²',
                 'frequencia': 'A cada 1.000-10.000 anos',
-                'exemplo_historico': 'Tunguska (1908) - 50m'
+                'exemplo_historico': 'Tunguska (1908, ~60m)'
             }
         elif diametro_km < 5.0:
             return {
@@ -115,7 +116,7 @@ class AnalisadorRiscos:
                 'dano_potencial': 'Devastação de país/continente',
                 'area_afetada': '~100.000 km²',
                 'frequencia': 'A cada 100.000 anos',
-                'exemplo_historico': 'Cratera de Barringer (50.000 anos atrás)'
+                'exemplo_historico': 'Cratera de Ries (Alemanha, impactor ~1,5 km, cratera de 24 km)'
             }
         else:
             return {
@@ -193,8 +194,8 @@ class AnalisadorRiscos:
         classificacao = AnalisadorRiscos.classificar_por_tamanho(diametro)
         comparacao_energia = AnalisadorRiscos.comparar_energia(energia_mt)
         
-        # Índice de Risco Próprio (0-100)
-        # Ponderação: 40% tamanho, 30% distância, 20% velocidade, 10% NASA
+        # Índice Multicritério de Prioridade de Monitoramento (0-100)
+        # Ponderação de Engenharia: 40% tamanho, 30% distância, 20% velocidade, 10% NASA PHA
         score_tamanho = min((diametro / 1.0) * 40, 40) if diametro > 0 else 0.0  # Normalizado até 1km
         score_distancia = max(30 - (distancia / 10) * 30, 0.0) if distancia >= 0 else 0.0  # Quanto mais perto, maior o risco
         score_velocidade = min((velocidade / 100000) * 20, 20.0) if velocidade > 0 else 0.0  # Normalizado até 100k km/h

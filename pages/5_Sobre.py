@@ -158,6 +158,23 @@ if os.path.exists(caminho_metricas):
             </table>
         </div>
         """, unsafe_allow_html=True)
+
+    st.write("")
+    with st.expander("🔬 ANÁLISE METODOLÓGICA DAS MÉTRICAS (FUNDAMENTAÇÃO DE TCC)", expanded=True):
+        st.markdown("""
+        **1. O Princípio da Precaução e a Priorização do Recall (98,1%)**
+        Em sistemas de Defesa Planetária e monitoramento de riscos catastróficos, o custo de um **Falso Negativo** (deixar de identificar um asteroide potencialmente perigoso) é inaceitável. O uso intencional de `class_weight='balanced'` ajusta as penalidades do algoritmo para que o modelo priorize a captura de ameaças, registrando apenas 165 falsos negativos em quase 90 mil observações.
+        
+        **2. Compreendendo a Precisão de 31,8% e a Ausência do Parâmetro MOID**
+        A definição formal da NASA para *Potentially Hazardous Asteroids (PHAs)* exige dois critérios simultâneos:
+        - Magnitude absoluta $H \\le 22.0$ (diâmetro aproximado $\\ge 140$ metros).
+        - Distância Mínima de Interseção Orbital (**MOID**) $\\le 0.05\\text{ UA}$ (~19,5 distâncias lunares).
+        
+        O dataset histórico público fornece a `miss_distance` (a distância pontual desta passagem específica), mas **não inclui o parâmetro orbital global MOID**. Por consequência:
+        - `absolute_magnitude` e `est_diameter_max` concentram **91,5%** da importância do Random Forest.
+        - O modelo aprende corretamente que asteroides grandes são candidatos a perigosos, mas sem o MOID orbital, classifica asteroides grandes como PHAs mesmo quando a geometria de suas órbitas não cruza criticamente a da Terra — resultando em 18.576 falsos alarmes (Falsos Positivos).
+        - Em termos de engenharia de software e triagem espacial, essa margem de falso alarme é plenamente justificada pelo ganho em segurança (Recall > 98%).
+        """)
 else:
     st.info("⚠️ Métricas do modelo não encontradas. O modelo ainda está sendo treinado no servidor.", icon="⏳")
 
