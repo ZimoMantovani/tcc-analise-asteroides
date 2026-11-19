@@ -8,10 +8,8 @@ from zoneinfo import ZoneInfo
 from src.database import get_engine
 
 # ⚠️ IMPORTANTE: nada de configuração roda aqui no nível do módulo.
-# utils.py faz "from etl_completo import ..." e isso EXECUTA o arquivo
-# inteiro no momento do import. Se a checagem de API_KEY (com exit())
-# ou a criação da engine estivessem aqui fora, um problema de .env
-# derrubaria o processo inteiro do Streamlit, não só essa função.
+# src/utils.py faz "from src.etl_completo import ..." e isso executa o arquivo
+# no momento do import. Configurações e conexões são instanciadas sob demanda.
 
 # ========== FUNÇÕES ==========
 

@@ -7,7 +7,7 @@ services:
       TZ: America/Sao_Paulo
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-neo_monitor}
+      POSTGRES_DB: ${DB_NAME:-tcc_asteroides}
     ports:
       - "5432:5432"
     volumes:
@@ -33,13 +33,15 @@ services:
       - DB_PORT=5432
       - DB_USER=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
-      - DB_NAME=${DB_NAME:-neo_monitor}
+      - DB_NAME=${DB_NAME:-tcc_asteroides}
       - NASA_API_KEY=${NASA_API_KEY}
     volumes:
       # Mapeamento local para hot-reload. Altere o código no seu editor e veja no browser sem rebuildar.
       - ./src:/app/src
       - ./pages:/app/pages
       - ./app.py:/app/app.py
+      - ./models:/app/models
+      - ./assets:/app/assets
 
 volumes:
   neo_pgdata:

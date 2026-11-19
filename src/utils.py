@@ -159,7 +159,9 @@ def render_sidebar():
                 except Exception:
                     st.write("❌ Tabela 'asteroides': Não existe ou está vazia")
 
-                if os.getenv('DB_PASSWORD'):
-                    st.write("✅ Senha carregada")
+                if os.getenv('DATABASE_URL'):
+                    st.write("✅ Autenticação: DATABASE_URL (Nuvem/Supabase)")
+                elif os.getenv('DB_PASSWORD'):
+                    st.write("✅ Autenticação: Senha local (.env) carregada")
                 else:
-                    st.write("❌ Senha: Não encontrada no .env")
+                    st.write("❌ Autenticação: Nenhuma credencial encontrada no .env")

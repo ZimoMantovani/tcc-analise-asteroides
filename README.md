@@ -192,7 +192,7 @@ Existem dois jeitos — escolha o que preferir.
 A lógica pura de cálculo de risco (`src/analise_riscos.py`) tem cobertura de testes com `pytest` — é a única parte do sistema que não depende de banco de dados ou da API da NASA para ser testada isoladamente.
 
 ```bash
-pip install pytest  # já incluso em requirements.txt
+pip install -r requirements-dev.txt  # instala pytest e dependências de desenvolvimento
 pytest
 ```
 

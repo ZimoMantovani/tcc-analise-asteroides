@@ -18,16 +18,16 @@ import streamlit as st
 def _gerar_estrelas(quantidade=200, seed=42):
     """
     Gera posições aleatórias de 'estrelas' como camadas de radial-gradient CSS.
-    seed fixo garante que o padrão de estrelas não mude a cada rerun da página
-    (senão elas "pulariam" de lugar toda vez que você interagisse com algo).
+    Usa gerador local com seed fixa para garantir que o padrão não mude
+    sem poluir o estado global do módulo random.
     """
-    random.seed(seed)
+    rng = random.Random(seed)
     camadas = []
     for _ in range(quantidade):
-        x = random.uniform(0, 100)
-        y = random.uniform(0, 100)
-        tamanho = random.choice([1, 1, 1, 2])  # maioria pequena, algumas maiores
-        opacidade = random.uniform(0.3, 1.0)
+        x = rng.uniform(0, 100)
+        y = rng.uniform(0, 100)
+        tamanho = rng.choice([1, 1, 1, 2])  # maioria pequena, algumas maiores
+        opacidade = rng.uniform(0.3, 1.0)
         camadas.append(
             f"radial-gradient({tamanho}px {tamanho}px at {x:.2f}% {y:.2f}%, "
             f"rgba(255,255,255,{opacidade:.2f}), transparent)"

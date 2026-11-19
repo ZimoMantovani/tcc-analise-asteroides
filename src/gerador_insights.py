@@ -9,9 +9,9 @@ class GeradorInsights:
     
     @staticmethod
     def comparar_tamanho(diametro_km, id_neo):
-        # A seed garante que o mesmo asteroide SEMPRE retorne a mesma frase,
-        # mas asteroides diferentes variem o texto, dando sensação de dinamicidade.
-        random.seed(str(id_neo))
+        # Gerador com seed local isolada: o mesmo asteroide SEMPRE retorna a mesma frase,
+        # sem alterar o estado global do módulo random do Python.
+        rng = random.Random(str(id_neo))
         metros = diametro_km * 1000
         
         if metros < 2:
@@ -74,14 +74,12 @@ class GeradorInsights:
                 "um evento de extinção em potencial, do tamanho de uma província.",
                 "um leviatã cósmico, grande o suficiente para alterar a geografia da Terra."
             ]
-        return random.choice(opcoes)
+        return rng.choice(opcoes)
 
     @staticmethod
     def gerar_resumo_nlg(nome, id_neo, diametro_km, velocidade_kmh, distancia_lunar):
         """
-        Gera o parágrafo explicativo focando apenas nos dados físicos e contexto.
-        A predição de ML foi separada para a interface.
-        Revisar ML
+        Gera o parágrafo explicativo focando nos parâmetros físicos e contexto orbital.
         """
         texto_tamanho = GeradorInsights.comparar_tamanho(diametro_km, id_neo)
         
