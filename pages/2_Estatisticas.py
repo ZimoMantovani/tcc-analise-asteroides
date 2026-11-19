@@ -24,11 +24,17 @@ except Exception as e:
     st.stop()
 
 # Substitui o st.title pelo Hero (Capa) padronizado compacto
-renderizar_hero(
-    "Estatísticas Detalhadas",
-    "Análise de Distribuição e Comportamento dos NEOs",
-    compacto=True
-)
+try:
+    renderizar_hero(
+        "Estatísticas Detalhadas",
+        "Análise de Distribuição e Comportamento dos NEOs",
+        compacto=True
+    )
+except TypeError:
+    renderizar_hero(
+        "Estatísticas Detalhadas",
+        "Análise de Distribuição e Comportamento dos NEOs"
+    )
 
 st.divider()
 

@@ -22,11 +22,17 @@ except Exception as e:
     st.stop()
 
 # Capa da página
-renderizar_hero(
-    "Explorador de Asteroides",
-    "Filtre, pesquise e analise o dossiê detalhado dos objetos",
-    compacto=True
-)
+try:
+    renderizar_hero(
+        "Explorador de Asteroides",
+        "Filtre, pesquise e analise o dossiê detalhado dos objetos",
+        compacto=True
+    )
+except TypeError:
+    renderizar_hero(
+        "Explorador de Asteroides",
+        "Filtre, pesquise e analise o dossiê detalhado dos objetos"
+    )
 
 st.divider()
 

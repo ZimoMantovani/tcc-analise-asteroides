@@ -28,11 +28,17 @@ except Exception as e:
     st.stop()
 
 # Capa padronizada
-renderizar_hero(
-    "Avaliação de Ameaças Estelares",
-    "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning",
-    compacto=True
-)
+try:
+    renderizar_hero(
+        "Avaliação de Ameaças Estelares",
+        "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning",
+        compacto=True
+    )
+except TypeError:
+    renderizar_hero(
+        "Avaliação de Ameaças Estelares",
+        "Análise de Prioridade, Simulação de Impacto e Classificação de PHA com Machine Learning"
+    )
 
 # Gerar análise completa
 with st.spinner("Sintetizando cálculos orbitais e análise de risco..."):

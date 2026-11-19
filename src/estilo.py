@@ -195,7 +195,7 @@ def _buscar_imagem_apod():
     return None
 
 
-def renderizar_hero(titulo: str, subtitulo: str, compacto: bool = False):
+def renderizar_hero(titulo: str, subtitulo: str, compacto: bool = False, *args, **kwargs):
     """Renderiza uma seção de capa com a imagem real do dia da NASA."""
     resultado = _buscar_imagem_apod()
     imagem_url = resultado[0] if resultado else None

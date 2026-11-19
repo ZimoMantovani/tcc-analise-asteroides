@@ -16,11 +16,17 @@ aplicar_tema_espacial()
 render_sidebar()
 
 # Capa padronizada
-renderizar_hero(
-    "Especificações do Sistema",
-    "Arquitetura, tecnologias e informações sobre o projeto NEO Monitor",
-    compacto=True
-)
+try:
+    renderizar_hero(
+        "Especificações do Sistema",
+        "Arquitetura, tecnologias e informações sobre o projeto NEO Monitor",
+        compacto=True
+    )
+except TypeError:
+    renderizar_hero(
+        "Especificações do Sistema",
+        "Arquitetura, tecnologias e informações sobre o projeto NEO Monitor"
+    )
 
 st.divider()
 
